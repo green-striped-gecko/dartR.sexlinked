@@ -1,4 +1,4 @@
-#' @name gl.report.sexlinked2
+#' @name gl.report.sexlinked
 #' @title Identifies loci that are sex linked
 #' @description
 #' Alleles unique to the Y or W chromosome and monomorphic on the X chromosomes
@@ -62,7 +62,7 @@
 #' @family report functions
 #' @export
 
-gl.report.sexlinked2 <- function(x,
+gl.report.sexlinked <- function(x,
                                 sex = NULL,
                                 t.het = 0.1,
                                 t.hom = 0.1,
