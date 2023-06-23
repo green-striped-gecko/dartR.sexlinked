@@ -1,4 +1,4 @@
-#' @name gl.filter.sexlinked2
+#' @name gl.filter.sexlinked
 #' @title Filters loci that are sex linked
 #' @description
 #' Alleles unique to the Y or W chromosome and monomorphic on the X chromosomes
@@ -71,7 +71,7 @@
 #'
 #' @export
 
-gl.filter.sexlinked2 <- function(x,
+gl.filter.sexlinked <- function(x,
                                 sex = NULL,
                                 filter = NULL,
                                 read.depth = 0,
