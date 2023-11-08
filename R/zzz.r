@@ -1,4 +1,4 @@
-#' Setting up the package dartR.popgenomics
+#' Setting up the package dartR.sexlinked
 #'
 #' Setting up dartR.sexlinked
 #' @keywords internal
