@@ -1,5 +1,5 @@
 #' @name gl.filter.sexlinked
-#' @title Filters loci that are sex linked
+#' @title Filters loci that are sex linked  or not
 #' @description
 #' Alleles unique to the Y or W chromosome and monomorphic on the X chromosomes
 #' will appear in the SNP dataset as genotypes that are heterozygotic in all
@@ -89,7 +89,7 @@ gl.filter.sexlinked <- function(x,
     funname <- match.call()[[1]]
     utils.flag.start(func = funname,
                      build = "Jody",
-                     verbosity = verbose)
+                     verbose = verbose)
     
     # CHECK DATATYPE
     datatype <- utils.check.datatype(x, verbose = verbose)
