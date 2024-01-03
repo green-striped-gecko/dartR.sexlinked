@@ -13,8 +13,10 @@
 
 
 #needed to avoid error
-zzz<-NULL
+zzz <- NULL
 
+# defining function %dopar% from foreach package to pass CRAN checks
+`%dopar%` <- foreach::`%dopar%`
 
 build = "Jody"
 error <- crayon::red
