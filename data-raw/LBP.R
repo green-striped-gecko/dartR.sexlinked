@@ -6,19 +6,19 @@
 library(dartR)
 dir <- "C:/Users/Diangie/My Drive/Projects/SwissArmyKnife/SCRIPTS/New/LBP/filtering_regime_using_filter.sex.linked/"
 
-LBP <- gl.read.dart(filename = paste(dir,
+data0 <- gl.read.dart(filename = paste(dir,
                                      "LBP_DArT.csv", 
                                      sep = ""),
                     covfilename = paste(dir,
                                         "LBP_DArT_covariates.csv",
                                         sep = ""))
 
-LBP  # 400 genotypes,  10,149 binary SNPs
+data0  # 400 genotypes,  10,149 binary SNPs
 
 # Format sexes
-LBP$other$ind.metrics$sex <- gsub("Female", "F", LBP$other$ind.metrics$sex)
-LBP$other$ind.metrics$sex <- gsub("Male", "M", LBP$other$ind.metrics$sex)
-LBP$other$ind.metrics$sex <- gsub("Unknown", "", LBP$other$ind.metrics$sex)
+data0$other$ind.metrics$sex <- gsub("Female", "F", data0$other$ind.metrics$sex)
+data0$other$ind.metrics$sex <- gsub("Male", "M", data0$other$ind.metrics$sex)
+data0$other$ind.metrics$sex <- gsub("Unknown", "", data0$other$ind.metrics$sex)
 
 # Remove individuals for which silicoDArT sexes were wrong
 remove <- c("Y153", "LM022", "LM024", "LM117", "LM028", "LM129", "LM065", 
@@ -27,13 +27,13 @@ remove <- c("Y153", "LM022", "LM024", "LM117", "LM028", "LM129", "LM065",
             "LM066", "LM121", "LM106", "YLB_M6B_BLX1_M", "YLB_O3E_BL21", 
             "YLB_L9C_GR27_M", "YLB_E3I_GRYRT_M", "DSN6A_JUV_M", "LM059","LM078")
 
-LBP <- gl.keep.ind(LBP, 
-                   ind.list = LBP@ind.names[!(LBP@ind.names %in% remove)], 
+data <- gl.keep.ind(data0, 
+                   ind.list = data0@ind.names[!(data0@ind.names %in% remove)], 
                    mono.rm = TRUE)
 
-LBP  # 376 genotypes,  9,508 binary SNPs
+data  # 376 genotypes,  9,508 binary SNPs
 
-LBP@other$ind.metrics <- droplevels(LBP@other$ind.metrics)
+data@other$ind.metrics <- droplevels(data@other$ind.metrics)
 
 
 # Remove secondaries
@@ -48,17 +48,34 @@ LBP@other$ind.metrics <- droplevels(LBP@other$ind.metrics)
 # 
 # This may introduce a bias in which SNPs with more equal allele freq (p = 0.5) 
 # are more likely to be kept. So we use method "random".
-LBP <- gl.filter.secondaries(LBP, method = "random")
+data <- gl.filter.secondaries(data, method = "random")
 
-LBP  # 376 genotypes,  8,436 binary SNPs
+data  # 376 genotypes,  8,436 binary SNPs
+
+# Identify autosomes in order to downsample them
+data_sex <- filter.sex.linked(data, system = "xy")
+# **FINISHED** Total of analyzed loci: 8436.
+# Found 73 sex-linked loci:
+#   1 Y-linked loci
+# 6 sex-biased loci
+# 65 X-linked loci
+# 1 XY gametologs.
+# And 8363 autosomal loci.
+
+aut <- sample(data_sex$autosomal@loc.names, 
+              size = 927, 
+              replace = FALSE)
+
 
 # Downsample loci to upload to dartR.sexlinked
-LBP_test <- gl.keep.loc(LBP, 
-                   loc.list = sample(LBP@loc.names, 
-                                     size = 1000, 
-                                     replace = FALSE))
+YTH <- gl.keep.loc(data, 
+                   loc.list = c(aut, 
+                                data_sex$x.linked@loc.names,    # all x-linked
+                                data_sex$sex.biased@loc.names,  # all sex-biased
+                                data_sex$y.linked@loc.names,    # all y-linked
+                                data_sex$gametolog@loc.names))  # all gametologs
 
-LBP  # 782 genotypes,  1,000 binary SNPs
+LBP  # 376 genotypes,  1,000 binary SNPs, 5.2 Mb
 
 # Save as file in package
-usethis::use_data(LBP)
+usethis::use_data(LBP, overwrite = TRUE)
