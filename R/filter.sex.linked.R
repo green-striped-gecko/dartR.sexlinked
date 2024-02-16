@@ -66,12 +66,9 @@
 filter.sex.linked <- function(gl, 
                               system = NULL, 
                               plots = TRUE, 
-                              # parallel = FALSE,
                               ncores = 1) {
   
-  # if(parallel){
-    if(ncores > 1 ){
-    # ncores <- parallel::detectCores()-1
+  if(ncores > 1 ){
     cl <- parallel::makeCluster(ncores)
     doParallel::registerDoParallel(cl)
   }
@@ -115,18 +112,14 @@ filter.sex.linked <- function(gl,
   table$count.F.scored <- rowSums(!is.na(gen.F))
   table$count.M.scored <- rowSums(!is.na(gen.M))
   
-  # if(parallel){
-    if(ncores > 1){
-      
+  if(ncores > 1){
     message("Starting phase 1. Working in parallel...")
   } else {
     message("Starting phase 1. May take a while...")
   }
   
   # Apply Fisher's exact test (because there are observations with less than 5)
-  # if(parallel){
-    if(ncores > 1){
-      
+  if(ncores > 1){
     xfisher <- foreach::foreach(i = 1:nrow(table), .combine = rbind) %dopar%{
       # Make vector of observed values
       obs <- matrix(c(table[i, "count.F.miss"],
@@ -316,15 +309,9 @@ filter.sex.linked <- function(gl,
   table$count.M.hom <- rowSums(gen.M != 1,  # Ignores NAs
                                na.rm = TRUE)
   
-  # Add empty columns for statistic and corresponding p-value
-  #  table$stat         <- NA
-  #  table$stat.p.value <- NA
-  
-  
   message("Done. Starting phase 2.")
   
-  # if(parallel){
-    if(ncores > 1){
+  if(ncores > 1){
       
     xstat <- foreach::foreach(i = 1:nrow(table), .combine = rbind) %dopar% {
       
@@ -546,9 +533,9 @@ filter.sex.linked <- function(gl,
     d <- table[table$zw.gametolog == TRUE, "index"]
     
     autosomal <- table[table$w.linked     == FALSE &
-                         table$sex.biased   == FALSE &
-                         table$z.linked     == FALSE &
-                         table$zw.gametolog == FALSE, "index"]
+                       table$sex.biased   == FALSE &
+                       table$z.linked     == FALSE &
+                       table$zw.gametolog == FALSE, "index"]
     
     message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
             "Found ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
@@ -580,21 +567,12 @@ filter.sex.linked <- function(gl,
   }
   
   
-  ##### 3.2 Subset gl object (according to IntroTutorial_dartR.pdf, page 32)
+  ##### 3.2 Subset gl object
   A <- gl[ , a]  # Loci are columns
-  A@other$loc.metrics <- A@other$loc.metrics[a, ]
-  
   B <- gl[ , b]
-  B@other$loc.metrics <- B@other$loc.metrics[b, ]
-  
   C <- gl[ , c]
-  C@other$loc.metrics <- C@other$loc.metrics[c, ]
-  
   D <- gl[ , d]
-  D@other$loc.metrics <- D@other$loc.metrics[d, ]
-  
   gl.autosomal <- gl[ , autosomal]
-  gl.autosomal@other$loc.metrics <- gl.autosomal@other$loc.metrics[autosomal, ]
   
   
   
@@ -615,9 +593,7 @@ filter.sex.linked <- function(gl,
                     "gametolog"     = D,
                     "autosomal"     = gl.autosomal)}
   
-  # if(parallel){
-    if(ncores > 1){
-      
+  if(ncores > 1){
     parallel::stopCluster(cl)
   }
   
