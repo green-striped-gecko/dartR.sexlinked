@@ -1,4 +1,4 @@
-#'@name gl.infer.sex
+#'@name infer.sex
 #'@title Uses sex-linked loci to infer sex of individuals
 #'@description
 #' This function uses the output of function filter.sex.linked (list of 6 
@@ -61,9 +61,11 @@
 #' preliminary sex-assignments match (i.e., indefinite sex assignment).} 
 #' }
 #' 
+#'
 #' @return A dataframe.
-#' @author Custodian: Diana Robledo-Ruiz  & Floriaan Devloo-Delva  -- Post to
-#'   \url{https://groups.google.com/d/forum/dartr}
+#'
+#' @author Diana Robledo-Ruiz & Floriaan Devloo-Delva (Write to
+#'  \email{diana.robledoruiz1@@monash.edu})
 #'
 #' @examples
 #' out <- filter.sex.linked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
@@ -73,9 +75,8 @@
 #' @importFrom stats kmeans
 #' @importFrom stats na.omit
 #' 
-#' @export
-
-gl.infer.sex <- function(gl_sex_filtered, 
+#' @export infer.sex
+infer.sex <- function(gl_sex_filtered, 
                       system = NULL, 
                       seed = NULL) {
   

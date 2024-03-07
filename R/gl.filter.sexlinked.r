@@ -1,4 +1,4 @@
-#'@name filter.sex.linked
+#'@name gl.filter.sexlinked
 #'@title Filters loci that are sex linked
 #'@description
 #' This function identifies sex-linked and autosomal loci present in a SNP 
@@ -49,8 +49,8 @@
 #'
 #' @return A list of 6 elements and 4 plots.
 #'
-#' @author Diana Robledo-Ruiz & Floriaan Devloo-Delva (Write to
-#'  \email{diana.robledoruiz1@@monash.edu})
+#' @author Custodian: Diana Robledo-Ruiz  & Floriaan Devloo-Delva  -- Post to
+#'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
 #' out <- filter.sex.linked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
@@ -62,8 +62,9 @@
 #' @importFrom stats p.adjust
 #' @importFrom foreach foreach "%dopar%"
 #' 
-#' @export filter.sex.linked
-filter.sex.linked <- function(gl, 
+#' @export
+#' 
+gl.filter.sexlinked <- function(gl, 
                               system = NULL, 
                               plots = TRUE, 
                               ncores = 1) {
