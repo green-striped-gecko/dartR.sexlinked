@@ -49,11 +49,11 @@
 #'
 #' @return A list of 6 elements and 4 plots.
 #'
-#' @author Custodian: Diana Robledo-Ruiz  & Floriaan Devloo-Delva  -- Post to
+#' @author Custodian: Diana Robledo-Ruiz -- Post to
 #'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' out <- filter.sex.linked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
+#' out <- gl.filter.sexlinked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
 #' out$results.table
 #' out$x.linked
 #' 
@@ -65,9 +65,9 @@
 #' @export
 #' 
 gl.filter.sexlinked <- function(gl, 
-                              system = NULL, 
-                              plots = TRUE, 
-                              ncores = 1) {
+                                system = NULL, 
+                                plots = TRUE, 
+                                ncores = 1) {
   
   if(ncores > 1 ){
     cl <- parallel::makeCluster(ncores)

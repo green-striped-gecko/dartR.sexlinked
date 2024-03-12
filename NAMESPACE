@@ -2,7 +2,6 @@
 
 export(gl.filter.sexlinked)
 export(gl.infer.sex)
-export(infer.sex)
 import(adegenet)
 import(dartR.base)
 import(dartR.data)

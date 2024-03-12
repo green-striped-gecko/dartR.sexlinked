@@ -1,7 +1,7 @@
-#'@name infer.sex
+#'@name gl.infer.sex
 #'@title Uses sex-linked loci to infer sex of individuals
 #'@description
-#' This function uses the output of function filter.sex.linked (list of 6 
+#' This function uses the output of function gl.filter.sexlinked (list of 6 
 #' genlight objects) to infer the sex of all individuals in the dataset. 
 #' It uses 3 types of sex-linked loci (W-/Y-linked, Z-/X-linked, and 
 #' gametologs), assigns a preliminary genetic sex for each type of sex-linked
@@ -10,7 +10,7 @@
 #' This function produces as output a dataframe with individuals in rows and 11 
 #' columns.
 #'
-#' @param gl_sex_filtered The output of function filter.sex.linked (complete 
+#' @param gl_sex_filtered The output of function gl.filter.sexlinked (complete 
 #' list with 6 elements). See explanation in "Details" section [required].
 #' @param system String that declares the sex-determination system of the 
 #' species: 'zw' or 'xy' [required].
@@ -19,7 +19,7 @@
 #'
 #' @details
 #' Parameter \code{gl_sex_filtered} must be the name of the output object (a 
-#' list of 6 elements) produced by function \code{filter.sex.linked}. Parameter 
+#' list of 6 elements) produced by function \code{gl.filter.sexlinked}. Parameter 
 #' \code{seed} must be an integer that will be used on the KMeans algorithm used
 #' by the function. We highly recommend choosing the seed to guarantee 
 #' repeatability.
@@ -61,24 +61,23 @@
 #' preliminary sex-assignments match (i.e., indefinite sex assignment).} 
 #' }
 #' 
-#'
 #' @return A dataframe.
-#'
-#' @author Diana Robledo-Ruiz & Floriaan Devloo-Delva (Write to
-#'  \email{diana.robledoruiz1@@monash.edu})
+#' @author Custodian: Diana Robledo-Ruiz  -- Post to
+#'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' out <- filter.sex.linked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
-#' inferred.sexes <- infer.sex(gl_sex_filtered = out, system = "xy", seed = 100)
+#' out <- gl.filter.sexlinked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
+#' inferred.sexes <- gl.infer.sex(gl_sex_filtered = out, system = "xy", seed = 100)
 #' inferred.sexes
 #' 
 #' @importFrom stats kmeans
 #' @importFrom stats na.omit
 #' 
-#' @export infer.sex
-infer.sex <- function(gl_sex_filtered, 
-                      system = NULL, 
-                      seed = NULL) {
+#' @export
+
+gl.infer.sex <- function(gl_sex_filtered, 
+                         system = NULL, 
+                         seed = NULL) {
   
   # Parameters check
   if(is.null(system)){
@@ -106,10 +105,16 @@ infer.sex <- function(gl_sex_filtered,
   
   # Gametologs
   gl3    <- gl_sex_filtered$gametolog
-  table  <- gl_sex_filtered$results.table        # Retrieve table
-  all    <- table[table$zw.gametolog == TRUE, ]  # Gametologs
-  all    <- all[order(all$stat.p.adjusted), ]    # Order from smallest p-value
-  useful <- row.names(all[1:5, ])                # Keep name of only top 5 gametologs
+  table  <- gl_sex_filtered$results.table          # Retrieve table
+  
+  
+  if(system == "zw") {
+    all    <- table[table$zw.gametolog == TRUE, ]  # Gametologs
+  } else {
+    all    <- table[table$xy.gametolog == TRUE, ]  # Gametologs
+  }
+  all    <- all[order(all$stat.p.adjusted), ]      # Order from smallest p-value
+  useful <- row.names(all[1:5, ])                  # Keep name of only top 5 gametologs
   
   
   # Make sex assignment per type of sex-linked loci (Functions declared below)

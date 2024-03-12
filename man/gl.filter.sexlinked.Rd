@@ -61,12 +61,12 @@ And 4 plots:\itemize{
 }
 }
 \examples{
-out <- filter.sex.linked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
+out <- gl.filter.sexlinked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
 out$results.table
 out$x.linked
 
 }
 \author{
-Custodian: Diana Robledo-Ruiz  & Floriaan Devloo-Delva  -- Post to
+Custodian: Diana Robledo-Ruiz -- Post to
   \url{https://groups.google.com/d/forum/dartr}
 }
