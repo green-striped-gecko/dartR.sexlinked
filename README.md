@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# `dartR.sexlinked` <a href="https://green-striped-gecko.github.io/dartR/"><img src="man/figures/dartR_logo.png" align="right" height="140"/></a>
+# `dartR.sexlinked` <a href="https://green-striped-gecko.github.io/dartR/"><img src='man/figures/dartR_logo.png' align="right" height="300" /></a>
 
 ## An accessible genetic analysis platform for conservation, ecology and agriculture - dartR.base
 
@@ -24,7 +24,7 @@ Zenodo:
 
 ## Overview
 
-`dartR.sexlinked` aims to identify and analyse sexlinked loci in SNP
+`dartR.sexlinked` aims to identify and analyse sex-linked loci in SNP
 data.
 
 Currently the dartRverse consists of the following packages:
@@ -39,11 +39,12 @@ Currently the dartRverse consists of the following packages:
 - dartR.sexlinked (this package)
 
 `dartR` and its packages is a collaboration between the University of
-Canberra, CSIRO and Diversity Arrays Technology, and is supported with
+Canberra, CSIRO, Diversity Arrays Technology, Arthur Rylah Institute for
+Environmental Research and Monash University. `dartR` is supported with
 funding from the ACT Priority Investment Program, CSIRO and the
 University of Canberra.
 
-dartR.sexlinked is developed by the Monash University…..
+dartR.sexlinked is developed by Monash University.
 
 <p align="center">
 <img src='man/figures/institutions.png' width="800"/>
@@ -85,4 +86,4 @@ Have fun working with `dartR`!
 
 Cheers,
 
-Bernd, Arthur, Luis, Carlo & Olly
+Bernd, Arthur, Luis, Carlo, Olly & Diana
