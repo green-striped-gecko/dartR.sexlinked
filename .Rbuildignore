@@ -3,3 +3,4 @@
 ^\.github$
 README[.]
 ^data-raw$
+^data$
