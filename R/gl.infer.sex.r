@@ -191,7 +191,7 @@ gl.infer.sex <- function(gl_sex_filtered,
 ############################### 1. W.sex function
 ### Map NAs (missing) and scored (called) to 1Dim in [-1,1], IF x<0, F else M
 
-W.sex <- function(gl, system = 'zw'){
+W.sex <- function(gl, system = NULL){
   w <- as.matrix(gl)
   w[is.na(w)] <- 3
   
@@ -222,7 +222,7 @@ W.sex <- function(gl, system = 'zw'){
 ############################### 2. Z.sex function
 ### Map Hom and Het to 2Dim and apply kmeans. Choose the label from maximum Hom
 
-Z.sex <- function(gl, system = 'zw', seed = 42){
+Z.sex <- function(gl, system = NULL, seed = 42){
   z <- as.matrix(gl)
   
   n0.z = rowSums(z == 0 | z == 2, na.rm = TRUE)
@@ -275,7 +275,7 @@ Z.sex <- function(gl, system = 'zw', seed = 42){
 ############################### 3. ZWg.sex function
 ### Map Hom and Het to 2Dim and apply kmeans. Choose the label from maximum Het
 
-g.sex <-  function(gl, system = 'zw', seed = 42, useful = useful) {
+g.sex <-  function(gl, system = NULL, seed = 42, useful = useful) {
   
   z <- as.matrix(gl)
   z <- z[, useful]
