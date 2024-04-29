@@ -168,9 +168,9 @@ gl.infer.sex <- function(gl_sex_filtered,
                'x.linked.sex',  '#Het.x',   '#Hom.x',
                'gametolog.sex', '#Het.g',   '#Hom.g', 'agreed.sex')
   } else {
-    names <- c('w.linked.sex',  '#missing', '#called',
-               'z.linked.sex',  '#Hom.z',  '#Het.z',
-               'gametolog.sex', '#Hom.g',  '#Het.g', 'agreed.sex')
+    names <- c('w.linked.sex',  '#called', '#missing',
+               'z.linked.sex',  '#Het.z',  '#Hom.z',
+               'gametolog.sex', '#Het.g',  '#Hom.g', 'agreed.sex')
   }
   
   colnames(A) <- names
