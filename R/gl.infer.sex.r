@@ -236,7 +236,7 @@ Z.sex <- function(gl, system = NULL, seed = 42){
   set.seed(seed)
   km <- kmeans(Z, 2)
   
-  i <- which.max(n1.z) # Largest proportion of '1'
+  i <- names(which.max(n1.z)) # Largest proportion of '1'
   label <- km$cluster[i]
   
   if(system == 'xy'){
@@ -291,7 +291,7 @@ g.sex <-  function(gl, system = NULL, seed = 42, useful = useful) {
   set.seed(seed)
   km <- kmeans(Z, 2)
   
-  i <- which.max(n1.g) # Largest proportion of '1'
+  i <- names(which.max(n1.g)) # Largest proportion of '1'
   label <- km$cluster[i]
   
   if(system == 'xy'){
