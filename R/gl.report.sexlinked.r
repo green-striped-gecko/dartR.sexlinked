@@ -495,7 +495,7 @@ gl.report.sexlinked <- function(gl,
         geom_point(data = table.gametol, color='chartreuse3')+
         geom_point(data = table.zlinked, color='darkorange1')+
         xlab("% Heterozygous Females") + 
-        ylab("% heterozygous Males")+
+        ylab("% Heterozygous Males")+
         xlim(0, 1) + ylim(0, 1)
     }
     
