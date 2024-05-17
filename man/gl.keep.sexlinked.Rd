@@ -63,7 +63,7 @@ And four plots:\itemize{
 }
 }
 \examples{
-LBP_sexLinked <- gl.keep.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 6)
+LBP_sexLinked <- gl.keep.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 LBP_sexLinked$gametolog
 
 }

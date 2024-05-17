@@ -55,7 +55,7 @@
 #'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' LBP_sexLinked <- gl.keep.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 6)
+#' LBP_sexLinked <- gl.keep.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 #' LBP_sexLinked$gametolog
 #' 
 #' @importFrom stats chisq.test

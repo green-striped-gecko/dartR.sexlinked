@@ -78,7 +78,7 @@ And a dataframe in which loci are in rows, and columns:\itemize{
 }
 }
 \examples{
-out <- gl.report.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 6)
+out <- gl.report.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 
 }
 \author{

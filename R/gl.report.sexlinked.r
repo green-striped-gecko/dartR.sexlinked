@@ -70,7 +70,7 @@
 #'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' out <- gl.report.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 6)
+#' out <- gl.report.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 #' 
 #' @importFrom stats chisq.test
 #' @importFrom stats fisher.test
