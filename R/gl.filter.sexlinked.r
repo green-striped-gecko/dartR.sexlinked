@@ -1,19 +1,19 @@
-#'@name gl.filter.sexlinked
-#'@title Filters loci that are sex linked
+#'@name gl.drop.sexlinked
+#'@title Removes loci that are sex linked
 #'@description
 #' This function identifies sex-linked and autosomal loci present in a SNP 
 #' dataset (genlight object) using individuals with known sex. It identifies
 #' five types of loci: w-linked or y-linked, sex-biased, z-linked or
 #' x-linked, gametologous and autosomal.
 #' 
-#' This function produces as output a list with 6 elements and 4 plots.
+#' This function produces as output a genlight object with autosomal loci only.
 #'
 #' @param gl Name of the genlight object containing the SNP data. This genlight
 #' object needs to contain the sex of the individuals. See explanation in 
 #' details [required].
 #' @param system String that declares the sex-determination system of the 
 #' species: 'zw' or 'xy' [required].
-#' @param plots Creates four output plots. See explanation in details
+#' @param plot.display Creates four output plots. See explanation in details
 #' [default TRUE].
 #' @param ncores Number of processes to be used in parallel operation. If ncores
 #' > 1 parallel operation is activated, see "Details" section [default 1].
@@ -24,38 +24,34 @@
 #' assigned 'M' for male, or 'F' for female. The function ignores individuals 
 #' that are assigned anything else or nothing at all (unknown-sex).
 #' 
-#' The creation of plots can be turned-off (plots = FALSE) in order to save a 
-#' little bit of running time for very large datasets (>50,000 SNPs). However, 
-#' we strongly encourage you to always inspect the output plots at least once to
-#' make sure everything is working properly.
+#' The creation of plots can be turned-off (\code{plot.display = FALSE}) in order
+#' to save a little bit of running time for very large datasets (>50,000 SNPs). 
+#' However, we strongly encourage you to always inspect the output plots at 
+#' least once to make sure everything is working properly.
 #'
 #'\strong{ Function's output }
 #'
-#' This function creates a list of 6 elements: \itemize{
-#' \item {$results.table > Table with statistics (columns) for each loci (rows)}
-#' \item {$w.linked or $y.linked > Genlight object with w-linked/y-linked loci}
-#' \item {$sex.biased > Genlight object with sex-biased scoring rate loci} 
-#' \item {$z.linked or $x.linked > Genlight object with z-linked/x-linked loci}
-#' \item {$gametolog > Genlight object with gametologs} 
-#' \item {$autosomal > Genlight object with autosomal loci}
-#' }
+#' This function returns as output a genlight object that contains only autosomal
+#' loci (i.e. sex-linked loci have been dropped.)
+
 #' 
-#' And 4 plots:\itemize{
-#' \item {A plot BEFORE filtering sex-linked loci by call rate}
-#' \item {A plot AFTER filtering sex-linked loci by call rate} 
-#' \item {A plot BEFORE filtering sex-linked loci by heterozygosity}
-#' \item {A plot AFTER filtering sex-linked loci by heterozygosity}
+#' And four plots:\itemize{
+#' \item {A BEFORE plot based on loci call rate by sex, with w/y-linked loci colored 
+#'        in yellow and sex-biased loci in blue}
+#' \item {An AFTER plot based on loci call rate by sex, with sex-linked loci removed}
+#' \item {A BEFORE plot based on loci heterozygosity by sex, with z/x-linked loci colored 
+#'        in orange and gametologs in green} 
+#' \item {An AFTER plot based on loci heterozygosity by sex, with sex-linked loci removed}
 #' }
 #'
-#' @return A list of 6 elements and 4 plots.
+#' @return A genlight object and 4 plots.
 #'
 #' @author Custodian: Diana Robledo-Ruiz -- Post to
 #'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' out <- gl.filter.sexlinked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
-#' out$results.table
-#' out$x.linked
+#' LBP_noSexLinked <- gl.drop.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 6)
+#' LBP_noSexLinked
 #' 
 #' @importFrom stats chisq.test
 #' @importFrom stats fisher.test
@@ -64,10 +60,10 @@
 #' 
 #' @export
 #' 
-gl.filter.sexlinked <- function(gl, 
-                                system = NULL, 
-                                plots = TRUE, 
-                                ncores = 1) {
+gl.drop.sexlinked <- function(gl, 
+                              system = NULL, 
+                              plot.display = TRUE, 
+                              ncores = 1) {
   
   if(ncores > 1 ){
     cl <- parallel::makeCluster(ncores)
@@ -224,6 +220,7 @@ gl.filter.sexlinked <- function(gl,
         table[i, "w.linked"] <- FALSE
       }
     }
+    table.wlinked <- table[table$w.linked == TRUE, ]
   }
   
   # For xy sex-determination system
@@ -237,6 +234,7 @@ gl.filter.sexlinked <- function(gl,
         table[i, "y.linked"] <- FALSE
       }
     }
+    table.ylinked <- table[table$y.linked == TRUE, ]
   }
   
   
@@ -250,51 +248,57 @@ gl.filter.sexlinked <- function(gl,
       table[i, "sex.biased"] <- FALSE
     }
   }
+  table.sexbiased <- table[table$sex.biased == TRUE, ]
+  
   
   ##### 1.3 Plot BEFORE vs AFTER
-  if(plots) {
+  if(plot.display) {
     message("Building call rate plots.")
     
     # For zw sex-determination system
     if(system == "zw") {
-      BEF.mis <- plot(x = table$scoringRate.F,
-                      y = table$scoringRate.M,
-                      main = "BEFORE",
-                      xlab = "Call rate Females",
-                      ylab = "Call rate Males",
-                      xlim = c(0, 1),
-                      ylim = c(0, 1))
+      table.autosomal <- table[table$w.linked == FALSE & table$sex.biased == FALSE, ]
       
-      AFT.mis <- plot(x = table[table$w.linked == FALSE & table$sex.biased == FALSE,
-                                "scoringRate.F"],
-                      y = table[table$w.linked == FALSE & table$sex.biased == FALSE,
-                                "scoringRate.M"],
-                      main = "AFTER",
-                      xlab = "Call rate Females",
-                      ylab = "Call rate Males",
-                      xlim = c(0, 1),
-                      ylim = c(0, 1))
+      BEF.mis <- ggplot2::ggplot(table.autosomal, 
+                                 aes(x = scoringRate.F, y = scoringRate.M)) +
+        geom_point(color = 'grey33')+
+        geom_point(data = table.sexbiased, color = 'dodgerblue3')+
+        geom_point(data = table.wlinked, color = 'gold')+
+        ggtitle("BEFORE dropping sex-linked loci") +
+        xlab("Call rate Females") + 
+        ylab("Call rate Males")+
+        xlim(0, 1) + ylim(0, 1)
+      
+      AFT.mis <- ggplot2::ggplot(table.autosomal, 
+                                 aes(x = scoringRate.F, y = scoringRate.M)) +
+        geom_point(color = 'grey33')+
+        ggtitle("AFTER dropping sex-linked loci") +
+        xlab("Call rate Females") + 
+        ylab("Call rate Males")+
+        xlim(0, 1) + ylim(0, 1)
     }
     
     # For xy sex-determination system
     if(system == "xy") {
-      BEF.mis <- plot(x = table$scoringRate.F,
-                      y = table$scoringRate.M,
-                      main = "BEFORE",
-                      xlab = "Call rate Females",
-                      ylab = "Call rate Males",
-                      xlim = c(0, 1),
-                      ylim = c(0, 1))
+      table.autosomal <- table[table$y.linked == FALSE & table$sex.biased == FALSE, ]
       
-      AFT.mis <- plot(x = table[table$y.linked == FALSE & table$sex.biased == FALSE,
-                                "scoringRate.F"],
-                      y = table[table$y.linked == FALSE & table$sex.biased == FALSE,
-                                "scoringRate.M"],
-                      main = "AFTER",
-                      xlab = "Call rate Females",
-                      ylab = "Call rate Males",
-                      xlim = c(0, 1),
-                      ylim = c(0, 1))
+      BEF.mis <- ggplot2::ggplot(table.autosomal, 
+                                 aes(x = scoringRate.F, y = scoringRate.M)) +
+        geom_point(color = 'grey33')+
+        geom_point(data = table.sexbiased, color = 'dodgerblue3')+
+        geom_point(data = table.ylinked, color = 'gold')+
+        ggtitle("BEFORE dropping sex-linked loci") +
+        xlab("Call rate Females") + 
+        ylab("Call rate Males")+
+        xlim(0, 1) + ylim(0, 1)
+      
+      AFT.mis <- ggplot2::ggplot(table.autosomal, 
+                                 aes(x = scoringRate.F, y = scoringRate.M)) +
+        geom_point(color = 'grey33')+
+        ggtitle("AFTER dropping sex-linked loci") +
+        xlab("Call rate Females") + 
+        ylab("Call rate Males")+
+        xlim(0, 1) + ylim(0, 1)
     }
   }
   
@@ -310,7 +314,7 @@ gl.filter.sexlinked <- function(gl,
   table$count.M.hom <- rowSums(gen.M != 1,  # Ignores NAs
                                na.rm = TRUE)
   
-  message("Done. Starting phase 2.")
+  message("Starting phase 2. May take a while...")
   
   if(ncores > 1){
       
@@ -427,8 +431,8 @@ gl.filter.sexlinked <- function(gl,
   ##### 2.1 Z-linked or X-linked loci AND gametologs
   # For zw sex-determination system
   if(system == "zw") {
-    table$z.linked     <- FALSE
-    table$zw.gametolog <- FALSE
+    table$z.linked  <- FALSE
+    table$gametolog <- FALSE
     
     for (i in 1:nrow(table)) {
       # Exclude w-linked loci and loci with sex-biased score
@@ -439,17 +443,19 @@ gl.filter.sexlinked <- function(gl,
           if (table[i, "heterozygosity.M"] > table[i, "heterozygosity.F"]) {
             table[i, "z.linked"] <- TRUE
           } else {
-            table[i, "zw.gametolog"] <- TRUE
+            table[i, "gametolog"] <- TRUE
           }
         }
       }
     }
+    table.zlinked <- table[table$z.linked  == TRUE, ]
+    table.gametol <- table[table$gametolog == TRUE, ]
   }
   
   # For xy sex-determination system
   if(system == "xy") {
-    table$x.linked     <- FALSE
-    table$xy.gametolog <- FALSE
+    table$x.linked  <- FALSE
+    table$gametolog <- FALSE
     
     for (i in 1:nrow(table)) {
       # Exclude y-linked loci and loci with sex-biased score
@@ -460,66 +466,70 @@ gl.filter.sexlinked <- function(gl,
           if (table[i, "heterozygosity.F"] > table[i, "heterozygosity.M"]) {
             table[i, "x.linked"] <- TRUE
           } else {
-            table[i, "xy.gametolog"] <- TRUE
+            table[i, "gametolog"] <- TRUE
           }
         }
       }
     }
+    table.xlinked <- table[table$x.linked  == TRUE, ]
+    table.gametol <- table[table$gametolog == TRUE, ]
   }
   
   
   ##### 2.2 Plot BEFORE vs AFTER
-  if(plots) {
+  if(plot.display) {
     message("Building heterozygosity plots.")
     
     # For zw sex-determination system
     if(system == "zw") {
-      BEF.het <- plot(x = table$heterozygosity.F,
-                      y = table$heterozygosity.M,
-                      xlab = "% Heterozygous Females",
-                      ylab = "% Heterozygous Males",
-                      main = "BEFORE",
-                      xlim = c(0, 1),
-                      ylim = c(0, 1))
+      table.autosomal <- table[table$w.linked   == FALSE & 
+                               table$sex.biased == FALSE &
+                               table$z.linked   == FALSE &
+                               table$gametolog  == FALSE, ]
       
-      AFT.het <- plot(x = table[table$w.linked       == FALSE &
-                                  table$sex.biased   == FALSE &
-                                  table$z.linked     == FALSE &
-                                  table$zw.gametolog == FALSE, "heterozygosity.F"],
-                      y = table[table$w.linked       == FALSE &
-                                  table$sex.biased   == FALSE &
-                                  table$z.linked     == FALSE &
-                                  table$zw.gametolog == FALSE, "heterozygosity.M"],
-                      main = "AFTER",
-                      xlab = "% Heterozygous Females",
-                      ylab = "% Heterozygous Males",
-                      xlim = c(0, 1),
-                      ylim = c(0, 1))
+      BEF.het <- ggplot2::ggplot(table.autosomal, 
+                                 aes(x = heterozygosity.F, y = heterozygosity.M)) +
+        geom_point(color='grey33')+
+        geom_point(data = table.gametol, color='chartreuse3')+
+        geom_point(data = table.zlinked, color='darkorange1')+
+        ggtitle("BEFORE dropping sex-linked loci") +
+        xlab("% Heterozygous Females") + 
+        ylab("% heterozygous Males")+
+        xlim(0, 1) + ylim(0, 1)
+      
+      AFT.het <- ggplot2::ggplot(table.autosomal, 
+                                 aes(x = heterozygosity.F, y = heterozygosity.M)) +
+        geom_point(color='grey33')+
+        ggtitle("AFTER dropping sex-linked loci") +
+        xlab("% Heterozygous Females") + 
+        ylab("% heterozygous Males")+
+        xlim(0, 1) + ylim(0, 1)
     }
     
     # For xy sex-determination system
     if(system == "xy") {
-      BEF.het <- plot(x = table$heterozygosity.F,
-                      y = table$heterozygosity.M,
-                      xlab = "% Heterozygous Females",
-                      ylab = "% Heterozygous Males",
-                      main = "BEFORE",
-                      xlim = c(0, 1),
-                      ylim = c(0, 1))
+      table.autosomal <- table[table$y.linked   == FALSE & 
+                               table$sex.biased == FALSE &
+                               table$x.linked   == FALSE &
+                               table$gametolog  == FALSE, ]
       
-      AFT.het <- plot(x = table[table$y.linked     == FALSE &
-                                  table$sex.biased   == FALSE &
-                                  table$x.linked     == FALSE &
-                                  table$xy.gametolog == FALSE, "heterozygosity.F"],
-                      y = table[table$y.linked     == FALSE &
-                                  table$sex.biased   == FALSE &
-                                  table$x.linked     == FALSE &
-                                  table$xy.gametolog == FALSE, "heterozygosity.M"],
-                      main = "AFTER",
-                      xlab = "% Heterozygous Females",
-                      ylab = "% Heterozygous Males",
-                      xlim = c(0, 1),
-                      ylim = c(0, 1))
+      BEF.het <- ggplot2::ggplot(table.autosomal, 
+                                 aes(x = heterozygosity.F, y = heterozygosity.M)) +
+        geom_point(color='grey33')+
+        geom_point(data = table.gametol, color='chartreuse3')+
+        geom_point(data = table.xlinked, color='darkorange1')+
+        ggtitle("BEFORE dropping sex-linked loci") +
+        xlab("% Heterozygous Females") + 
+        ylab("% Heterozygous Males")+
+        xlim(0, 1) + ylim(0, 1)
+      
+      AFT.het <- ggplot2::ggplot(table.autosomal, 
+                                 aes(x = heterozygosity.F, y = heterozygosity.M)) +
+        geom_point(color='grey33')+
+        ggtitle("AFTER dropping sex-linked loci") +
+        xlab("% Heterozygous Females") + 
+        ylab("% Heterozygous Males")+
+        xlim(0, 1) + ylim(0, 1)
     }
     message("Done building heterozygosity plots.")
   }
@@ -528,75 +538,59 @@ gl.filter.sexlinked <- function(gl,
   ##### 3.1 Save the indices of each category of loci to later subset gl
   # For zw sex-determination system
   if(system == "zw") {
-    a <- table[table$w.linked     == TRUE, "index"]
-    b <- table[table$sex.biased   == TRUE, "index"]
-    c <- table[table$z.linked     == TRUE, "index"]
-    d <- table[table$zw.gametolog == TRUE, "index"]
+    a <- table[table$w.linked   == TRUE, "index"]
+    b <- table[table$sex.biased == TRUE, "index"]
+    c <- table[table$z.linked   == TRUE, "index"]
+    d <- table[table$gametolog  == TRUE, "index"]
     
-    autosomal <- table[table$w.linked     == FALSE &
-                       table$sex.biased   == FALSE &
-                       table$z.linked     == FALSE &
-                       table$zw.gametolog == FALSE, "index"]
+    autosomal <- table[table$w.linked   == FALSE &
+                       table$sex.biased == FALSE &
+                       table$z.linked   == FALSE &
+                       table$gametolog  == FALSE, "index"]
     
     message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
-            "Found ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
+            "Dropped ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
             "   ",    length(a), " W-linked loci\n",
             "   ",    length(b), " sex-biased loci\n",
             "   ",    length(c), " Z-linked loci\n",
-            "   ",    length(d), " ZW gametologs.\n",
-            "And ",   length(autosomal), " autosomal loci.")
+            "   ",    length(d), " gametologs.\n",
+            "And kept ",   length(autosomal), " autosomal loci.")
   }
   
   if(system == "xy") {
-    a <- table[table$y.linked     == TRUE, "index"]
-    b <- table[table$sex.biased   == TRUE, "index"]
-    c <- table[table$x.linked     == TRUE, "index"]
-    d <- table[table$xy.gametolog == TRUE, "index"]
+    a <- table[table$y.linked   == TRUE, "index"]
+    b <- table[table$sex.biased == TRUE, "index"]
+    c <- table[table$x.linked   == TRUE, "index"]
+    d <- table[table$gametolog  == TRUE, "index"]
     
-    autosomal <- table[table$y.linked     == FALSE &
-                         table$sex.biased   == FALSE &
-                         table$x.linked     == FALSE &
-                         table$xy.gametolog == FALSE, "index"]
-    
+    autosomal <- table[table$y.linked   == FALSE &
+                       table$sex.biased == FALSE &
+                       table$x.linked   == FALSE &
+                       table$gametolog  == FALSE, "index"]
+  
     message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
-            "Found ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
+            "Dropped ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
             "   ",    length(a), " Y-linked loci\n",
             "   ",    length(b), " sex-biased loci\n",
             "   ",    length(c), " X-linked loci\n",
-            "   ",    length(d), " XY gametologs.\n",
-            "And ",   length(autosomal), " autosomal loci.")
+            "   ",    length(d), " gametologs.\n",
+            "And kept ",   length(autosomal), " autosomal loci.")
   }
   
   
   ##### 3.2 Subset gl object
-  A <- gl[ , a]  # Loci are columns
-  B <- gl[ , b]
-  C <- gl[ , c]
-  D <- gl[ , d]
   gl.autosomal <- gl[ , autosomal]
   
   
-  
   #################### 4. Output
-  if(system == "xy"){
-    rlist <- list(  "results.table" = table,
-                    "y.linked"      = A,
-                    "sex.biased"    = B,
-                    "x.linked"      = C,
-                    "gametolog"     = D,
-                    "autosomal"     = gl.autosomal)}
-  
-  if(system == "zw"){
-    rlist <- list(  "results.table" = table,
-                    "w.linked"      = A,
-                    "sex.biased"    = B,
-                    "z.linked"      = C,
-                    "gametolog"     = D,
-                    "autosomal"     = gl.autosomal)}
-  
   if(ncores > 1){
     parallel::stopCluster(cl)
   }
   
-  return(rlist)
+  print(BEF.mis)
+  print(AFT.mis)
+  print(BEF.het)
+  print(AFT.het)
+  
+  return(gl.autosomal)
 }

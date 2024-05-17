@@ -494,7 +494,7 @@ gl.drop.sexlinked <- function(gl,
         geom_point(data = table.zlinked, color='darkorange1')+
         ggtitle("BEFORE dropping sex-linked loci") +
         xlab("% Heterozygous Females") + 
-        ylab("% heterozygous Males")+
+        ylab("% Heterozygous Males")+
         xlim(0, 1) + ylim(0, 1)
       
       AFT.het <- ggplot2::ggplot(table.autosomal, 
@@ -502,7 +502,7 @@ gl.drop.sexlinked <- function(gl,
         geom_point(color='grey33')+
         ggtitle("AFTER dropping sex-linked loci") +
         xlab("% Heterozygous Females") + 
-        ylab("% heterozygous Males")+
+        ylab("% Heterozygous Males")+
         xlim(0, 1) + ylim(0, 1)
     }
     
@@ -587,10 +587,12 @@ gl.drop.sexlinked <- function(gl,
     parallel::stopCluster(cl)
   }
   
-  print(BEF.mis)
-  print(AFT.mis)
-  print(BEF.het)
-  print(AFT.het)
+  if(plot.display){
+    print(BEF.mis)
+    print(AFT.mis)
+    print(BEF.het)
+    print(AFT.het)
+  }
   
   return(gl.autosomal)
 }
