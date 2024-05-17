@@ -242,7 +242,6 @@ gl.report.sexlinked <- function(gl,
     table.wlinked <- table[table$w.linked == TRUE, ]
   }
   
-  
   # For xy sex-determination system
   if(system == "xy") {
     table$y.linked <- NA
@@ -256,7 +255,6 @@ gl.report.sexlinked <- function(gl,
     }
     table.ylinked <- table[table$y.linked == TRUE, ]
   }
-  
   
   
   ##### 1.2 Loci with sex-biased scoring rate
@@ -458,7 +456,7 @@ gl.report.sexlinked <- function(gl,
   
   # For xy sex-determination system
   if(system == "xy") {
-    table$x.linked     <- FALSE
+    table$x.linked  <- FALSE
     table$gametolog <- FALSE
     
     for (i in 1:nrow(table)) {
@@ -480,13 +478,13 @@ gl.report.sexlinked <- function(gl,
   }
   
   
-  ##### 2.2 Plot BEFORE vs AFTER
+  ##### 2.2 Plot
   if(plot.display) {
     message("Building heterozygosity plot.")
     
     # For zw sex-determination system
     if(system == "zw") {
-      table.autosomal <- table[table$w.linked   == FALSE & 
+      table.autosomal <- table[table$w.linked     == FALSE & 
                                  table$sex.biased == FALSE &
                                  table$z.linked   == FALSE &
                                  table$gametolog  == FALSE , ]
@@ -504,9 +502,9 @@ gl.report.sexlinked <- function(gl,
     # For xy sex-determination system
     if(system == "xy") {
       table.autosomal <- table[table$y.linked     == FALSE & 
-                                 table$sex.biased   == FALSE &
-                                 table$x.linked     == FALSE &
-                                 table$gametolog == FALSE , ]
+                                 table$sex.biased == FALSE &
+                                 table$x.linked   == FALSE &
+                                 table$gametolog  == FALSE , ]
       
       BEF.het <- ggplot2::ggplot(table.autosomal, 
                                  aes(x = heterozygosity.F, y = heterozygosity.M)) +
