@@ -501,7 +501,7 @@ gl.keep.sexlinked <- function(gl,
         geom_point(data = table.zlinked, color='darkorange1')+
         ggtitle("BEFORE keeping only sex-linked loci") +
         xlab("% Heterozygous Females") + 
-        ylab("% heterozygous Males")+
+        ylab("% Heterozygous Males")+
         xlim(0, 1) + ylim(0, 1)
       
       AFT.het <- ggplot2::ggplot(table.gametol, 
@@ -510,7 +510,7 @@ gl.keep.sexlinked <- function(gl,
         geom_point(data = table.zlinked, color='darkorange1')+
         ggtitle("AFTER keeping only sex-linked loci") +
         xlab("% Heterozygous Females") + 
-        ylab("% heterozygous Males")+
+        ylab("% Heterozygous Males")+
         xlim(0, 1) + ylim(0, 1)
     }
     
