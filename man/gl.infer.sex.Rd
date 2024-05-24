@@ -4,11 +4,11 @@
 \alias{gl.infer.sex}
 \title{Uses sex-linked loci to infer sex of individuals}
 \usage{
-gl.infer.sex(gl_sex_filtered, system = NULL, seed = NULL)
+gl.infer.sex(gl_sexlinked, system = NULL, seed = NULL)
 }
 \arguments{
-\item{gl_sex_filtered}{The output of function gl.filter.sexlinked (complete 
-list with 6 elements). See explanation in "Details" section [required].}
+\item{gl_sexlinked}{The output of function gl.keep.sexlinked (complete 
+list with 5 elements). See explanation in "Details" section [required].}
 
 \item{system}{String that declares the sex-determination system of the 
 species: 'zw' or 'xy' [required].}
@@ -20,8 +20,8 @@ by user, it is chosen randomly by default. See "Details" section.}
 A dataframe.
 }
 \description{
-This function uses the output of function gl.filter.sexlinked (list of 6 
-genlight objects) to infer the sex of all individuals in the dataset. 
+This function uses the output of function gl.keep.sexlinked (list of 5 
+elements) to infer the sex of all individuals in the dataset. 
 It uses 3 types of sex-linked loci (W-/Y-linked, Z-/X-linked, and 
 gametologs), assigns a preliminary genetic sex for each type of sex-linked
 loci available, and outputs an agreed sex.
@@ -30,8 +30,8 @@ This function produces as output a dataframe with individuals in rows and 11
 columns.
 }
 \details{
-Parameter \code{gl_sex_filtered} must be the name of the output object (a 
-list of 6 elements) produced by function \code{gl.filter.sexlinked}. Parameter 
+Parameter \code{gl_sexlinked} must be the name of the output object (a 
+list of 5 elements) produced by function \code{gl.keep.sexlinked}. Parameter 
 \code{seed} must be an integer that will be used on the KMeans algorithm used
 by the function. We highly recommend choosing the seed to guarantee 
 repeatability.
@@ -74,8 +74,8 @@ preliminary sex-assignments match (i.e., indefinite sex assignment).}
 }
 }
 \examples{
-out <- gl.filter.sexlinked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
-inferred.sexes <- gl.infer.sex(gl_sex_filtered = out, system = "xy", seed = 100)
+LBP_sexLinked <- gl.keep.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+inferred.sexes <- gl.infer.sex(gl_sexlinked = LBP_sexLinked, system = "xy", seed = 100)
 inferred.sexes
 
 }
