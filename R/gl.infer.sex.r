@@ -66,7 +66,7 @@
 #'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' LBP_sexLinked <- gl.keep.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+#' LBP_sexLinked <- gl.keep.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 #' inferred.sexes <- gl.infer.sex(gl_sexlinked = LBP_sexLinked, system = "xy", seed = 100)
 #' inferred.sexes
 #' 

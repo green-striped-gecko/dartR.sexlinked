@@ -4,21 +4,46 @@
 \alias{gl.report.sexlinked}
 \title{Filters loci that are sex linked}
 \usage{
-gl.report.sexlinked(gl, system = NULL, plot.display = TRUE, ncores = 1)
+gl.report.sexlinked(
+  x,
+  system = NULL,
+  ncores = 1,
+  plot.display = TRUE,
+  plot.theme = theme_dartR(),
+  plot.colors = NULL,
+  plot.file = NULL,
+  plot.dir = NULL,
+  verbose = NULL
+)
 }
 \arguments{
-\item{gl}{Name of the genlight object containing the SNP data. This genlight
+\item{x}{Name of the genlight object containing the SNP data. This genlight
 object needs to contain the sex of the individuals. See explanation in 
 details [required].}
 
 \item{system}{String that declares the sex-determination system of the 
 species: 'zw' or 'xy' [required].}
 
+\item{ncores}{Number of processes to be used in parallel operation. If ncores
+> 1 parallel operation is activated, see "Details" section [default 1].}
+
 \item{plot.display}{Creates two output plots. See explanation in details
 [default TRUE].}
 
-\item{ncores}{Number of processes to be used in parallel operation. If ncores
-> 1 parallel operation is activated, see "Details" section [default 1].}
+\item{plot.theme}{Theme for the plot. See Details for options
+[default theme_dartR()].[not yet implemented]}
+
+\item{plot.colors}{[not implemented yet]}
+
+\item{plot.file}{Name for the RDS binary file to save (base name only, 
+exclude extension) [default NULL].}
+
+\item{plot.dir}{Directory to save the plot RDS files [default as specified 
+by the global working directory or tempdir()].}
+
+\item{verbose}{Verbosity: 0, silent or fatal errors; 1, begin and end; 2,
+progress log; 3, progress and results summary; 5, full report
+ [default NULL, unless specified using gl.set.verbosity].}
 }
 \value{
 A dataframe and 2 plots.
@@ -78,7 +103,7 @@ And a dataframe in which loci are in rows, and columns:\itemize{
 }
 }
 \examples{
-out <- gl.report.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+out <- gl.report.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 
 }
 \author{

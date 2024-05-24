@@ -8,16 +8,26 @@
 #' 
 #' This function produces as output a dataframe and 2 plots.
 #'
-#' @param gl Name of the genlight object containing the SNP data. This genlight
+#' @param x Name of the genlight object containing the SNP data. This genlight
 #' object needs to contain the sex of the individuals. See explanation in 
 #' details [required].
 #' @param system String that declares the sex-determination system of the 
 #' species: 'zw' or 'xy' [required].
-#' @param plot.display Creates two output plots. See explanation in details
-#' [default TRUE].
 #' @param ncores Number of processes to be used in parallel operation. If ncores
 #' > 1 parallel operation is activated, see "Details" section [default 1].
 #'
+#' @param plot.display Creates two output plots. See explanation in details
+#' [default TRUE].
+#' @param plot.theme Theme for the plot. See Details for options
+#' [default theme_dartR()].[not yet implemented]
+#' @param plot.colors [not implemented yet]
+#' @param plot.dir Directory to save the plot RDS files [default as specified 
+#' by the global working directory or tempdir()].
+#' @param plot.file Name for the RDS binary file to save (base name only, 
+#' exclude extension) [default NULL].
+#' @param verbose Verbosity: 0, silent or fatal errors; 1, begin and end; 2,
+#' progress log; 3, progress and results summary; 5, full report
+#'  [default NULL, unless specified using gl.set.verbosity].
 #' @details
 #' The genlight object must contain in \code{gl@other$ind.metrics} a column 
 #' named "id", and a column named "sex" in which individuals with known-sex are 
@@ -70,7 +80,7 @@
 #'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' out <- gl.report.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+#' out <- gl.report.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 #' 
 #' @importFrom stats chisq.test
 #' @importFrom stats fisher.test
@@ -79,10 +89,45 @@
 #' 
 #' @export
 #' 
-gl.report.sexlinked <- function(gl, 
+gl.report.sexlinked <- function(x, 
                                 system = NULL, 
+                                ncores = 1,
                                 plot.display = TRUE, 
-                                ncores = 1) {
+                                plot.theme = theme_dartR(),
+                                plot.colors = NULL,
+                                plot.file=NULL,
+                                plot.dir=NULL,
+                                verbose = NULL) {
+  
+  # PRELIMINARIES -- checking ----------------
+  # SET VERBOSITY
+  verbose <- gl.check.verbosity(verbose)
+  if(verbose==0){plot.display <- FALSE}
+  
+  # SET WORKING DIRECTORY
+  plot.dir <- gl.check.wd(plot.dir,verbose=0)
+  
+  # SET COLOURS #not yet implemented...
+  if(is.null(plot.colors)){
+    plot.colors <- c("#2171B5", "#6BAED6")
+  } else {
+    if(length(plot.colors) > 2){
+      if(verbose >= 2){cat(warn("  More than 2 colors specified, only the first 2 are used\n"))}
+      plot.colors <- plot.colors[1:2]
+    }
+  }
+  
+  # FLAG SCRIPT START
+  funname <- match.call()[[1]]
+  utils.flag.start(func = funname,
+                   build = "v.2023.3",
+                   verbose = verbose)
+  
+  # CHECK DATATYPE
+  datatype <- utils.check.datatype(x, accept = c("genlight", "SNP", "SilicoDArT"), verbose = verbose)
+  
+  
+  
   
   if(ncores > 1 ){
     cl <- parallel::makeCluster(ncores)
@@ -98,17 +143,17 @@ gl.report.sexlinked <- function(gl,
   }
   
   # Transform genotypes to matrix and transpose
-  gen <- as.data.frame(t(as.matrix(gl)))
+  gen <- as.data.frame(t(as.matrix(x)))
   
   # Extract IDs per sex (FUNCTION IGNORES ALL UNSEXED INDS!)
-  if(!("F" %in% gl@other$ind.metrics$sex | "M" %in% gl@other$ind.metrics$sex)){
+  if(!("F" %in% x@other$ind.metrics$sex | "M" %in% x@other$ind.metrics$sex)){
     stop("Females and males in @other$ind.metrics$sex must be 'F' or 'M', respectively.")
   }
   
-  ids.F <- gl@other$ind.metrics[gl@other$ind.metrics$sex == 'F' & !is.na(gl@other$ind.metrics$sex), 'id']
-  ids.M <- gl@other$ind.metrics[gl@other$ind.metrics$sex == 'M' & !is.na(gl@other$ind.metrics$sex), 'id']
+  ids.F <- x@other$ind.metrics[x@other$ind.metrics$sex == 'F' & !is.na(x@other$ind.metrics$sex), 'id']
+  ids.M <- x@other$ind.metrics[x@other$ind.metrics$sex == 'M' & !is.na(x@other$ind.metrics$sex), 'id']
   
-  message(paste("Detected ", length(ids.F), " females and ", length(ids.M), " males.", sep = ""))
+  if (verbose>1) message(paste("Detected ", length(ids.F), " females and ", length(ids.M), " males.", sep = ""))
   
   # Subset genotypes by sex
   gen.F <- gen[ , (colnames(gen) %in% ids.F)]
@@ -129,9 +174,9 @@ gl.report.sexlinked <- function(gl,
   table$count.M.scored <- rowSums(!is.na(gen.M))
   
   if(ncores > 1){
-    message("Starting phase 1. Working in parallel...")
+    if (verbose>1) message("Starting phase 1. Working in parallel...")
   } else {
-    message("Starting phase 1. May take a while...")
+    if (verbose>1) message("Starting phase 1. May take a while...")
   }
   
   # Apply Fisher's exact test (because there are observations with less than 5)
@@ -218,7 +263,7 @@ gl.report.sexlinked <- function(gl,
     }
   }
   
-  
+  scoringRate.F <- scoringRate.M <- heterozygosity.F <- heterozygosity.M <- NA
   # Adjust p-values for multiple comparisons (False discovery rate)
   table$p.adjusted <- p.adjust(table$p.value, method = "fdr")
   
@@ -271,8 +316,7 @@ gl.report.sexlinked <- function(gl,
   
   
   ##### 1.3 Plot
-  if(plot.display) {
-    message("Building call rate plot.")
+    if (verbose>1) message("Building call rate plot.")
     
     # For zw sex-determination system
     if(system == "zw") {
@@ -301,8 +345,8 @@ gl.report.sexlinked <- function(gl,
         ylab("Call rate Males")+
         xlim(0, 1) + ylim(0, 1)
     }
-    message("Done building call rate plot.")
-  }
+    if (verbose>1) message("Done building call rate plot.")
+  
   
   
   #################### 2. Sex-linked loci by heterozygosity
@@ -316,7 +360,7 @@ gl.report.sexlinked <- function(gl,
   table$count.M.hom <- rowSums(gen.M != 1,  # Ignores NAs
                                na.rm = TRUE)
   
-  message("Starting phase 2. May take a while...")
+  if (verbose>1) message("Starting phase 2. May take a while...")
   
   if(ncores > 1){
     
@@ -479,8 +523,7 @@ gl.report.sexlinked <- function(gl,
   
   
   ##### 2.2 Plot
-  if(plot.display) {
-    message("Building heterozygosity plot.")
+    if (verbose>1) message("Building heterozygosity plot.")
     
     # For zw sex-determination system
     if(system == "zw") {
@@ -515,8 +558,8 @@ gl.report.sexlinked <- function(gl,
         ylab("% Heterozygous Males")+
         xlim(0, 1) + ylim(0, 1)
     }
-    message("Done building heterozygosity plot.")
-  }
+    if (verbose>1) message("Done building heterozygosity plot.")
+
   
   #################### 3. Create output of function
   ##### 3.1 Save the indices of each category of loci for counts
@@ -532,7 +575,7 @@ gl.report.sexlinked <- function(gl,
                          table$z.linked   == FALSE &
                          table$gametolog  == FALSE, "index"]
     
-    message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
+    if (verbose>1) message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
             "Found ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
             "   ",    length(a), " W-linked loci\n",
             "   ",    length(b), " sex-biased loci\n",
@@ -552,7 +595,7 @@ gl.report.sexlinked <- function(gl,
                          table$x.linked   == FALSE &
                          table$gametolog  == FALSE, "index"]
     
-    message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
+    if (verbose>1) message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
             "Found ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
             "   ",    length(a), " Y-linked loci\n",
             "   ",    length(b), " sex-biased loci\n",
@@ -568,10 +611,36 @@ gl.report.sexlinked <- function(gl,
     parallel::stopCluster(cl)
   }
   
+  
+  
   if(plot.display){
     print(BEF.mis)
     print(BEF.het)
   }
+  
+  p2 <- BEF.mis+BEF.het
+  if(plot.display){
+    
+    print(p2)
+  }
+  # Optionally save the plot ---------------------
+  
+  if(!is.null(plot.file)){
+    tmp <- utils.plot.save(p2,
+                           dir=plot.dir,
+                           file=plot.file,
+                           verbose=verbose)
+  }
+  
+  # FLAG SCRIPT END ---------------
+  
+  if (verbose >= 1) {
+    cat(report("Completed:", funname, "\n"))
+  }
+  # ----------------------
+  
+  # RETURN
+  
   
   return(table)
 }
