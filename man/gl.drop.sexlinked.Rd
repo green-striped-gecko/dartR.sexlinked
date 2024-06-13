@@ -86,6 +86,15 @@ LBP_noSexLinked <- gl.drop.sexlinked(x = LBP, system = "xy", plot.display = TRUE
 LBP_noSexLinked
 
 }
+\references{
+\itemize{
+\item Robledo‐Ruiz, D. A., Austin, L., Amos, J. N., Castrejón‐Figueroa, J.,
+ Harley, D. K., Magrath, M. J., Sunnucks, P., & Pavlova, A. (2023). 
+ Easy‐to‐use R functions to separate reduced‐representation genomic datasets
+  into sex‐linked and autosomal loci, and conduct sex assignment. Molecular 
+  Ecology Resources, 00, 1-21.
+ }
+}
 \author{
 Custodian: Diana Robledo-Ruiz -- Post to
   \url{https://groups.google.com/d/forum/dartr}

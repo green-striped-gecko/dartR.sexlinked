@@ -1,4 +1,4 @@
-#'@name x.keep.sexlinked
+#'@name gl.keep.sexlinked
 #'@title Keeps loci that are sex linked
 #'@description
 #' This function identifies sex-linked and autosomal loci present in a SNP 
@@ -67,6 +67,15 @@
 #' @examples
 #' LBP_sexLinked <- gl.keep.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 #' LBP_sexLinked$gametolog
+#' 
+#' @references
+#' \itemize{
+#' \item Robledo‐Ruiz, D. A., Austin, L., Amos, J. N., Castrejón‐Figueroa, J.,
+#'  Harley, D. K., Magrath, M. J., Sunnucks, P., & Pavlova, A. (2023). 
+#'  Easy‐to‐use R functions to separate reduced‐representation genomic datasets
+#'   into sex‐linked and autosomal loci, and conduct sex assignment. Molecular 
+#'   Ecology Resources, 00, 1-21.
+#'  }
 #' 
 #' @importFrom stats chisq.test
 #' @importFrom stats fisher.test
