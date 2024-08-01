@@ -1,8 +1,8 @@
 #'@name gl.infer.sex
 #'@title Uses sex-linked loci to infer sex of individuals
 #'@description
-#' This function uses the output of function gl.filter.sexlinked (list of 6 
-#' genlight objects) to infer the sex of all individuals in the dataset. 
+#' This function uses the output of function gl.keep.sexlinked (list of 5 
+#' elements) to infer the sex of all individuals in the dataset. 
 #' It uses 3 types of sex-linked loci (W-/Y-linked, Z-/X-linked, and 
 #' gametologs), assigns a preliminary genetic sex for each type of sex-linked
 #' loci available, and outputs an agreed sex.
@@ -10,16 +10,16 @@
 #' This function produces as output a dataframe with individuals in rows and 11 
 #' columns.
 #'
-#' @param gl_sex_filtered The output of function gl.filter.sexlinked (complete 
-#' list with 6 elements). See explanation in "Details" section [required].
+#' @param gl_sexlinked The output of function gl.keep.sexlinked (complete 
+#' list with 5 elements). See explanation in "Details" section [required].
 #' @param system String that declares the sex-determination system of the 
 #' species: 'zw' or 'xy' [required].
 #' @param seed User-defined integer for repeatability purposes. If not provided
 #' by user, it is chosen randomly by default. See "Details" section.
 #'
 #' @details
-#' Parameter \code{gl_sex_filtered} must be the name of the output object (a 
-#' list of 6 elements) produced by function \code{gl.filter.sexlinked}. Parameter 
+#' Parameter \code{gl_sexlinked} must be the name of the output object (a 
+#' list of 5 elements) produced by function \code{gl.keep.sexlinked}. Parameter 
 #' \code{seed} must be an integer that will be used on the KMeans algorithm used
 #' by the function. We highly recommend choosing the seed to guarantee 
 #' repeatability.
@@ -66,16 +66,24 @@
 #'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' out <- gl.filter.sexlinked(gl = LBP, system = "xy", plots = TRUE, ncores = 2)
-#' inferred.sexes <- gl.infer.sex(gl_sex_filtered = out, system = "xy", seed = 100)
+#' LBP_sexLinked <- gl.keep.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+#' inferred.sexes <- gl.infer.sex(gl_sexlinked = LBP_sexLinked, system = "xy", seed = 100)
 #' inferred.sexes
+#' 
+#' @references
+#' \itemize{
+#' \item Robledo‐Ruiz, D. A., Austin, L., Amos, J. N., Castrejón‐Figueroa, J.,
+#'  Harley, D. K., Magrath, M. J., Sunnucks, P., & Pavlova, A. (2023). 
+#'  Easy‐to‐use R functions to separate reduced‐representation genomic datasets
+#'   into sex‐linked and autosomal loci, and conduct sex assignment. Molecular 
+#'   Ecology Resources, 00, 1-21.
+#'  }
 #' 
 #' @importFrom stats kmeans
 #' @importFrom stats na.omit
 #' 
 #' @export
-
-gl.infer.sex <- function(gl_sex_filtered, 
+gl.infer.sex <- function(gl_sexlinked, 
                          system = NULL, 
                          seed = NULL) {
   
@@ -94,18 +102,18 @@ gl.infer.sex <- function(gl_sex_filtered,
   }
   
   if(system == "xy") {
-    gl1 <- gl_sex_filtered$y.linked
-    gl2 <- gl_sex_filtered$x.linked
+    gl1 <- gl_sexlinked$y.linked
+    gl2 <- gl_sexlinked$x.linked
   }
   
   if(system == "zw") {
-    gl1 <- gl_sex_filtered$w.linked
-    gl2 <- gl_sex_filtered$z.linked
+    gl1 <- gl_sexlinked$w.linked
+    gl2 <- gl_sexlinked$z.linked
   }
   
   # Gametologs
-  gl3    <- gl_sex_filtered$gametolog
-  table  <- gl_sex_filtered$results.table          # Retrieve table
+  gl3    <- gl_sexlinked$gametolog
+  table  <- gl_sexlinked$results.table  # Retrieve table
   
   
   if(system == "zw") {
@@ -168,9 +176,9 @@ gl.infer.sex <- function(gl_sex_filtered,
                'x.linked.sex',  '#Het.x',   '#Hom.x',
                'gametolog.sex', '#Het.g',   '#Hom.g', 'agreed.sex')
   } else {
-    names <- c('w.linked.sex',  '#missing', '#called',
-               'z.linked.sex',  '#Hom.z',  '#Het.z',
-               'gametolog.sex', '#Hom.g',  '#Het.g', 'agreed.sex')
+    names <- c('w.linked.sex',  '#called', '#missing',
+               'z.linked.sex',  '#Het.z',  '#Hom.z',
+               'gametolog.sex', '#Het.g',  '#Hom.g', 'agreed.sex')
   }
   
   colnames(A) <- names
@@ -191,7 +199,7 @@ gl.infer.sex <- function(gl_sex_filtered,
 ############################### 1. W.sex function
 ### Map NAs (missing) and scored (called) to 1Dim in [-1,1], IF x<0, F else M
 
-W.sex <- function(gl, system = 'zw'){
+W.sex <- function(gl, system = NULL){
   w <- as.matrix(gl)
   w[is.na(w)] <- 3
   
@@ -222,7 +230,7 @@ W.sex <- function(gl, system = 'zw'){
 ############################### 2. Z.sex function
 ### Map Hom and Het to 2Dim and apply kmeans. Choose the label from maximum Hom
 
-Z.sex <- function(gl, system = 'zw', seed = 42){
+Z.sex <- function(gl, system = NULL, seed = 42){
   z <- as.matrix(gl)
   
   n0.z = rowSums(z == 0 | z == 2, na.rm = TRUE)
@@ -236,7 +244,7 @@ Z.sex <- function(gl, system = 'zw', seed = 42){
   set.seed(seed)
   km <- kmeans(Z, 2)
   
-  i <- which.max(n1.z) # Largest proportion of '1'
+  i <- names(which.max(n1.z)) # Largest proportion of '1'
   label <- km$cluster[i]
   
   if(system == 'xy'){
@@ -275,7 +283,7 @@ Z.sex <- function(gl, system = 'zw', seed = 42){
 ############################### 3. ZWg.sex function
 ### Map Hom and Het to 2Dim and apply kmeans. Choose the label from maximum Het
 
-g.sex <-  function(gl, system = 'zw', seed = 42, useful = useful) {
+g.sex <-  function(gl, system = NULL, seed = 42, useful = useful) {
   
   z <- as.matrix(gl)
   z <- z[, useful]
@@ -291,7 +299,7 @@ g.sex <-  function(gl, system = 'zw', seed = 42, useful = useful) {
   set.seed(seed)
   km <- kmeans(Z, 2)
   
-  i <- which.max(n1.g) # Largest proportion of '1'
+  i <- names(which.max(n1.g)) # Largest proportion of '1'
   label <- km$cluster[i]
   
   if(system == 'xy'){
@@ -325,5 +333,4 @@ g.sex <-  function(gl, system = 'zw', seed = 42, useful = useful) {
   Y <- Y[, c("g.sex", "n1.g", "n0.g")]
   
   return(Y)
-  
 }
