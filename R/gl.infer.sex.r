@@ -115,14 +115,9 @@ gl.infer.sex <- function(gl_sexlinked,
   gl3    <- gl_sexlinked$gametolog
   table  <- gl_sexlinked$results.table  # Retrieve table
   
-  
-  if(system == "zw") {
-    all    <- table[table$zw.gametolog == TRUE, ]  # Gametologs
-  } else {
-    all    <- table[table$xy.gametolog == TRUE, ]  # Gametologs
-  }
-  all    <- all[order(all$stat.p.adjusted), ]      # Order from smallest p-value
-  useful <- row.names(all[1:5, ])                  # Keep name of only top 5 gametologs
+  all    <- table[table$gametolog == TRUE, ]
+  all    <- all[order(all$stat.p.adjusted), ]  # Order from smallest p-value
+  useful <- row.names(all[1:5, ])              # Keep name of only top 5 gametologs
   
   
   # Make sex assignment per type of sex-linked loci (Functions declared below)
@@ -173,12 +168,12 @@ gl.infer.sex <- function(gl_sexlinked,
   
   if(system == 'xy'){
     names <- c('y.linked.sex',  '#called', '#missing',
-               'x.linked.sex',  '#Het.x',   '#Hom.x',
-               'gametolog.sex', '#Het.g',   '#Hom.g', 'agreed.sex')
+               'x.linked.sex',  '#Het.x',  '#Hom.x',
+               'gametolog.sex', '#Het.g',  '#Hom.g',  'agreed.sex')
   } else {
     names <- c('w.linked.sex',  '#called', '#missing',
                'z.linked.sex',  '#Het.z',  '#Hom.z',
-               'gametolog.sex', '#Het.g',  '#Hom.g', 'agreed.sex')
+               'gametolog.sex', '#Het.g',  '#Hom.g',  'agreed.sex')
   }
   
   colnames(A) <- names
