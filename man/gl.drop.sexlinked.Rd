@@ -4,21 +4,46 @@
 \alias{gl.drop.sexlinked}
 \title{Removes loci that are sex linked}
 \usage{
-gl.drop.sexlinked(gl, system = NULL, plot.display = TRUE, ncores = 1)
+gl.drop.sexlinked(
+  x,
+  system = NULL,
+  ncores = 1,
+  plot.display = TRUE,
+  plot.theme = theme_dartR(),
+  plot.colors = NULL,
+  plot.file = NULL,
+  plot.dir = NULL,
+  verbose = NULL
+)
 }
 \arguments{
-\item{gl}{Name of the genlight object containing the SNP data. This genlight
+\item{x}{Name of the genlight object containing the SNP data. This genlight
 object needs to contain the sex of the individuals. See explanation in 
 details [required].}
 
 \item{system}{String that declares the sex-determination system of the 
 species: 'zw' or 'xy' [required].}
 
+\item{ncores}{Number of processes to be used in parallel operation. If ncores
+> 1 parallel operation is activated, see "Details" section [default 1].}
+
 \item{plot.display}{Creates four output plots. See explanation in details
 [default TRUE].}
 
-\item{ncores}{Number of processes to be used in parallel operation. If ncores
-> 1 parallel operation is activated, see "Details" section [default 1].}
+\item{plot.theme}{Theme for the plot. See Details for options
+[default theme_dartR()].[not yet implemented]}
+
+\item{plot.colors}{[not implemented yet]}
+
+\item{plot.file}{Name for the RDS binary file to save (base name only, 
+exclude extension) [default NULL].}
+
+\item{plot.dir}{Directory to save the plot RDS files [default as specified 
+by the global working directory or tempdir()].}
+
+\item{verbose}{Verbosity: 0, silent or fatal errors; 1, begin and end; 2,
+progress log; 3, progress and results summary; 5, full report
+ [default NULL, unless specified using gl.set.verbosity].}
 }
 \value{
 A genlight object and 4 plots.
@@ -57,9 +82,18 @@ And four plots:\itemize{
 }
 }
 \examples{
-LBP_noSexLinked <- gl.drop.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+LBP_noSexLinked <- gl.drop.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 LBP_noSexLinked
 
+}
+\references{
+\itemize{
+\item Robledo‐Ruiz, D. A., Austin, L., Amos, J. N., Castrejón‐Figueroa, J.,
+ Harley, D. K., Magrath, M. J., Sunnucks, P., & Pavlova, A. (2023). 
+ Easy‐to‐use R functions to separate reduced‐representation genomic datasets
+  into sex‐linked and autosomal loci, and conduct sex assignment. Molecular 
+  Ecology Resources, 00, 1-21.
+ }
 }
 \author{
 Custodian: Diana Robledo-Ruiz -- Post to

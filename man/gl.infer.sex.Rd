@@ -74,10 +74,19 @@ preliminary sex-assignments match (i.e., indefinite sex assignment).}
 }
 }
 \examples{
-LBP_sexLinked <- gl.keep.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+LBP_sexLinked <- gl.keep.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 inferred.sexes <- gl.infer.sex(gl_sexlinked = LBP_sexLinked, system = "xy", seed = 100)
 inferred.sexes
 
+}
+\references{
+\itemize{
+\item Robledo‐Ruiz, D. A., Austin, L., Amos, J. N., Castrejón‐Figueroa, J.,
+ Harley, D. K., Magrath, M. J., Sunnucks, P., & Pavlova, A. (2023). 
+ Easy‐to‐use R functions to separate reduced‐representation genomic datasets
+  into sex‐linked and autosomal loci, and conduct sex assignment. Molecular 
+  Ecology Resources, 00, 1-21.
+ }
 }
 \author{
 Custodian: Diana Robledo-Ruiz  -- Post to

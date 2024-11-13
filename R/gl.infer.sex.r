@@ -66,9 +66,18 @@
 #'   \url{https://groups.google.com/d/forum/dartr}
 #'
 #' @examples
-#' LBP_sexLinked <- gl.keep.sexlinked(gl = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+#' LBP_sexLinked <- gl.keep.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
 #' inferred.sexes <- gl.infer.sex(gl_sexlinked = LBP_sexLinked, system = "xy", seed = 100)
 #' inferred.sexes
+#' 
+#' @references
+#' \itemize{
+#' \item Robledo‐Ruiz, D. A., Austin, L., Amos, J. N., Castrejón‐Figueroa, J.,
+#'  Harley, D. K., Magrath, M. J., Sunnucks, P., & Pavlova, A. (2023). 
+#'  Easy‐to‐use R functions to separate reduced‐representation genomic datasets
+#'   into sex‐linked and autosomal loci, and conduct sex assignment. Molecular 
+#'   Ecology Resources, 00, 1-21.
+#'  }
 #' 
 #' @importFrom stats kmeans
 #' @importFrom stats na.omit
@@ -106,14 +115,9 @@ gl.infer.sex <- function(gl_sexlinked,
   gl3    <- gl_sexlinked$gametolog
   table  <- gl_sexlinked$results.table  # Retrieve table
   
-  
-  if(system == "zw") {
-    all    <- table[table$zw.gametolog == TRUE, ]  # Gametologs
-  } else {
-    all    <- table[table$xy.gametolog == TRUE, ]  # Gametologs
-  }
-  all    <- all[order(all$stat.p.adjusted), ]      # Order from smallest p-value
-  useful <- row.names(all[1:5, ])                  # Keep name of only top 5 gametologs
+  all    <- table[table$gametolog == TRUE, ]
+  all    <- all[order(all$stat.p.adjusted), ]  # Order from smallest p-value
+  useful <- row.names(all[1:5, ])              # Keep name of only top 5 gametologs
   
   
   # Make sex assignment per type of sex-linked loci (Functions declared below)
@@ -164,12 +168,12 @@ gl.infer.sex <- function(gl_sexlinked,
   
   if(system == 'xy'){
     names <- c('y.linked.sex',  '#called', '#missing',
-               'x.linked.sex',  '#Het.x',   '#Hom.x',
-               'gametolog.sex', '#Het.g',   '#Hom.g', 'agreed.sex')
+               'x.linked.sex',  '#Het.x',  '#Hom.x',
+               'gametolog.sex', '#Het.g',  '#Hom.g',  'agreed.sex')
   } else {
     names <- c('w.linked.sex',  '#called', '#missing',
                'z.linked.sex',  '#Het.z',  '#Hom.z',
-               'gametolog.sex', '#Het.g',  '#Hom.g', 'agreed.sex')
+               'gametolog.sex', '#Het.g',  '#Hom.g',  'agreed.sex')
   }
   
   colnames(A) <- names
