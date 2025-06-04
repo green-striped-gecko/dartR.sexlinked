@@ -611,11 +611,11 @@ gl.keep.sexlinked <- function(x,
     
     if (verbose>1) message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
             "Kept ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
-            "   ",    length(a), " W-linked loci\n",
-            "   ",    length(b), " sex-biased loci\n",
-            "   ",    length(c), " Z-linked loci\n",
-            "   ",    length(d), " gametologs.\n",
-            "And removed ",   length(autosomal), " autosomal loci.")
+            "   ",    length(a), " W-linked loci (yellow)\n",
+            "   ",    length(b), " sex-biased loci (blue)\n",
+            "   ",    length(c), " Z-linked loci (orange)\n",
+            "   ",    length(d), " gametologs (green).\n",
+            "And removed ",   length(autosomal), " autosomal loci (grey).")
   }
   
   if(system == "xy") {
@@ -631,11 +631,11 @@ gl.keep.sexlinked <- function(x,
   
     if (verbose>1) message("**FINISHED** Total of analyzed loci: ", nrow(table), ".\n",
             "Kept ", length(a)+length(b)+length(c)+length(d), " sex-linked loci:\n",
-            "   ",    length(a), " Y-linked loci\n",
-            "   ",    length(b), " sex-biased loci\n",
-            "   ",    length(c), " X-linked loci\n",
-            "   ",    length(d), " gametologs.\n",
-            "And removed ",   length(autosomal), " autosomal loci.")
+            "   ",    length(a), " Y-linked loci (yellow)\n",
+            "   ",    length(b), " sex-biased loci (blue)\n",
+            "   ",    length(c), " X-linked loci (orange)\n",
+            "   ",    length(d), " gametologs (green).\n",
+            "And removed ",   length(autosomal), " autosomal loci (grey).")
   }
   
   
