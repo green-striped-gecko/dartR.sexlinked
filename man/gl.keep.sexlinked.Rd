@@ -18,10 +18,10 @@ gl.keep.sexlinked(
 }
 \arguments{
 \item{x}{Name of the genlight object containing the SNP data. This genlight
-object needs to contain the sex of the individuals. See explanation in 
+object needs to contain the sex of the individuals. See explanation in
 details [required].}
 
-\item{system}{String that declares the sex-determination system of the 
+\item{system}{String that declares the sex-determination system of the
 species: 'zw' or 'xy' [required].}
 
 \item{ncores}{Number of processes to be used in parallel operation. If ncores
@@ -35,10 +35,10 @@ species: 'zw' or 'xy' [required].}
 
 \item{plot.colors}{[not implemented yet]}
 
-\item{plot.file}{Name for the RDS binary file to save (base name only, 
+\item{plot.file}{Name for the RDS binary file to save (base name only,
 exclude extension) [default NULL].}
 
-\item{plot.dir}{Directory to save the plot RDS files [default as specified 
+\item{plot.dir}{Directory to save the plot RDS files [default as specified
 by the global working directory or tempdir()].}
 
 \item{verbose}{Verbosity: 0, silent or fatal errors; 1, begin and end; 2,
@@ -49,55 +49,58 @@ progress log; 3, progress and results summary; 5, full report
 A list of 5 elements and 4 plots.
 }
 \description{
-This function identifies sex-linked and autosomal loci present in a SNP 
+This function identifies sex-linked and autosomal loci present in a SNP
 dataset (genlight object) using individuals with known sex. It identifies
 five types of loci: w-linked or y-linked, sex-biased, z-linked or
 x-linked, gametologous and autosomal.
 
-This function produces as output a list with 5 elements, including one 
+This function produces as output a list with 5 elements, including one
 dataframe and 4 genlight objects with sex-linked loci.
 }
 \details{
-The genlight object must contain in \code{gl@other$ind.metrics} a column 
-named "id", and a column named "sex" in which individuals with known-sex are 
-assigned 'M' for male, or 'F' for female. The function ignores individuals 
+The genlight object must contain in \code{gl@other$ind.metrics} a column
+named "id", and a column named "sex" in which individuals with known-sex are
+assigned 'M' for male, or 'F' for female. The function ignores individuals
 that are assigned anything else or nothing at all (unknown-sex).
 
-The creation of plots can be turned-off (\code{plot.display = FALSE}) in order
-to save a little bit of running time for very large datasets (>50,000 SNPs). 
-However, we strongly encourage you to always inspect the output plots at 
-least once to make sure everything is working properly.
+The creation of plots can be turned-off (\code{plot.display = FALSE}) in 
+order to save a little bit of running time for very large datasets 
+(>50,000 SNPs). However, we strongly encourage you to always inspect the 
+output plots at least once to make sure everything is working properly.
 
 \strong{ Function's output }
 
 This function returns a list of 5 elements: \itemize{
 \item {$results.table > Table with statistics (columns) for each loci (rows)}
 \item {$w.linked or $y.linked > Genlight object with w-linked/y-linked loci}
-\item {$sex.biased > Genlight object with sex-biased scoring rate loci} 
+\item {$sex.biased > Genlight object with sex-biased scoring rate loci}
 \item {$z.linked or $x.linked > Genlight object with z-linked/x-linked loci}
-\item {$gametolog > Genlight object with gametologs} 
+\item {$gametolog > Genlight object with gametologs}
 }
 
 And four plots:\itemize{
-\item {A BEFORE plot based on loci call rate by sex, with w/y-linked loci colored 
-       in yellow and sex-biased loci in blue}
-\item {An AFTER plot based on loci call rate by sex, with only sex-linked loci}
-\item {A BEFORE plot based on loci heterozygosity by sex, with z/x-linked loci colored 
-       in orange and gametologs in green} 
-\item {An AFTER plot based on loci heterozygosity by sex, with only sex-linked loci}
+\item {A BEFORE plot based on loci call rate by sex, with w/y-linked loci 
+colored in yellow and sex-biased loci in blue}
+\item {An AFTER plot based on loci call rate by sex, with only sex-linked
+ loci}
+\item {A BEFORE plot based on loci heterozygosity by sex, with z/x-linked 
+loci colored in orange and gametologs in green}
+\item {An AFTER plot based on loci heterozygosity by sex, with only 
+sex-linked loci}
 }
 }
 \examples{
-LBP_sexLinked <- gl.keep.sexlinked(x = LBP, system = "xy", plot.display = TRUE, ncores = 1)
+LBP_sexLinked <- gl.keep.sexlinked(x = LBP, system = "xy", 
+plot.display = TRUE, ncores = 1)
 LBP_sexLinked$gametolog
 
 }
 \references{
 \itemize{
-\item Robledo‐Ruiz, D. A., Austin, L., Amos, J. N., Castrejón‐Figueroa, J.,
- Harley, D. K., Magrath, M. J., Sunnucks, P., & Pavlova, A. (2023). 
- Easy‐to‐use R functions to separate reduced‐representation genomic datasets
-  into sex‐linked and autosomal loci, and conduct sex assignment. Molecular 
+\item Robledo-Ruiz, D. A., Austin, L., Amos, J. N., Castrejon-Figueroa, J.,
+ Harley, D. K., Magrath, M. J., Sunnucks, P., & Pavlova, A. (2023).
+ Easy to use R functions to separate reduced representation genomic datasets
+  into sex linked and autosomal loci, and conduct sex assignment. Molecular
   Ecology Resources, 00, 1-21.
  }
 }
