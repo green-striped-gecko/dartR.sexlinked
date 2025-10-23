@@ -39,7 +39,7 @@
 #' (>50,000 SNPs). However, we strongly encourage you to always inspect the
 #' output plots at least once to make sure everything is working properly.
 #'
-#'\strong{ Function output }
+#'\strong{ Function's output }
 #'
 #' This function returns two plots:\itemize{
 #' \item {A plot based on loci call rate by sex, with w/y-linked loci colored

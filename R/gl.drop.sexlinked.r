@@ -31,7 +31,7 @@
 #'
 #' @details
 #' The genlight object must contain in \code{gl@other$ind.metrics} a column
-#' named "id", and a column named "sex" in which individuals with known-sex are
+#' named 'id', and a column named 'sex' in which individuals with known-sex are
 #' assigned 'M' for male, or 'F' for female. The function ignores individuals
 #' that are assigned anything else or nothing at all (unknown-sex).
 #'
@@ -43,7 +43,7 @@
 #'\strong{ Function's output }
 #'
 #' This function returns as output a genlight object that contains only 
-#' autosomal loci (i.e. sex-linked loci have been dropped.)
+#' autosomal loci (i.e. sex-linked loci have been dropped).
 #'
 #' And four plots:\itemize{
 #' \item {A BEFORE plot based on loci call rate by sex, with w/y-linked loci
