@@ -178,15 +178,14 @@ gl.drop.sexlinked <- function(x,
   valid      <- !is.na(sex.values)
   
   # Check that at least one F or M exists
-  if (!any(sex.values[valid] %in% c("F", "M"))) {
-    stop(error(
-      "Females and males in the 'sex' column must be 'F' or 'M' (any case)."
-    ))
+  if (!any(sex.values[valid] %in% c("F", "M", "MALE", "FEMALE"))) {
+    stop(error("Females and males in the 'sex' column must be 'F' and 'M', 
+               or 'MALE' and 'FEMALE' (case-insensitive)."))
   }
   
   # subset IDs
-  ids.F <- metrics$id[sex.values == "F" & valid]
-  ids.M <- metrics$id[sex.values == "M" & valid]
+  ids.F <- metrics$id[sex.values %in% c("F", "FEMALE") & valid]
+  ids.M <- metrics$id[sex.values %in% c("M", "MALE")   & valid]
   
   if (verbose > 1){
     message(report(paste(
