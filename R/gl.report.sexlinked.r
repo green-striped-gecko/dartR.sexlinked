@@ -182,15 +182,25 @@ gl.report.sexlinked <- function(x,
   metrics <- x@other$ind.metrics
   
   # Locate the "sex" column regardless of case
-  sex.col <- grep("^sex$",
-                  names(metrics),
-                  ignore.case = TRUE,
-                  value = TRUE)
-  if (length(sex.col) != 1) {
-    stop(error(
-      "Could not find a single column named 'sex' (case-insensitive)."
-    ))
+  sex.cols <- grep("^sex$",
+                   names(metrics),
+                   ignore.case = TRUE,
+                   value = TRUE)
+  
+  if (length(sex.cols) == 0) {
+    stop(error("Could not find any column named 'sex' (case-insensitive)."))
   }
+  
+  if (length(sex.cols) > 1) {
+    cat(warn(sprintf(
+      "  Multiple columns matched 'sex' (case-insensitive): %s. Using the first: '%s'.",
+      paste(sex.cols, collapse = ", "),
+      sex.cols[1]
+    )))
+  }
+  
+  sex.col <- sex.cols[1]
+  
   
   # Pull values, force upper case, and drop NAs
   sex.values <- toupper(metrics[[sex.col]])
