@@ -717,10 +717,30 @@ gl.keep.sexlinked <- function(x,
   }
   
   ##### 3.2 Subset x object
-  A <- x[, a]  # Loci are columns
-  B <- x[, b]
-  C <- x[, c]
-  D <- x[, d]
+  if (length(a) > 0){
+    A <- x[, a]  # Loci are columns
+  } else {
+    A <- NULL
+  }
+  
+  if (length(b) > 0){
+    B <- x[, b]
+  } else {
+    B <- NULL
+  }
+  
+  if (length(c) > 0){
+    C <- x[, c]
+  } else {
+    C <- NULL
+  }
+  
+  if (length(d) > 0){
+    D <- x[, d]
+  } else {
+    D <- NULL
+  }
+  
   
   #################### 4. Output
   if (system == "xy") {
