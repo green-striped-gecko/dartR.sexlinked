@@ -31,7 +31,7 @@
 #'
 #' @details
 #' The genlight object must contain in \code{gl@other$ind.metrics} a column
-#' named "id", and a column named "sex" in which individuals with known-sex are
+#' named 'id', and a column named 'sex' in which individuals with known-sex are
 #' assigned 'M' for male, or 'F' for female. The function ignores individuals
 #' that are assigned anything else or nothing at all (unknown-sex).
 #'
@@ -43,7 +43,7 @@
 #'\strong{ Function's output }
 #'
 #' This function returns as output a genlight object that contains only 
-#' autosomal loci (i.e. sex-linked loci have been dropped.)
+#' autosomal loci (i.e. sex-linked loci have been dropped).
 #'
 #' And four plots:\itemize{
 #' \item {A BEFORE plot based on loci call rate by sex, with w/y-linked loci
@@ -178,15 +178,14 @@ gl.drop.sexlinked <- function(x,
   valid      <- !is.na(sex.values)
   
   # Check that at least one F or M exists
-  if (!any(sex.values[valid] %in% c("F", "M"))) {
-    stop(error(
-      "Females and males in the 'sex' column must be 'F' or 'M' (any case)."
-    ))
+  if (!any(sex.values[valid] %in% c("F", "M", "MALE", "FEMALE"))) {
+    stop(error("Females and males in the 'sex' column must be 'F' and 'M', 
+               or 'MALE' and 'FEMALE' (case-insensitive)."))
   }
   
   # subset IDs
-  ids.F <- metrics$id[sex.values == "F" & valid]
-  ids.M <- metrics$id[sex.values == "M" & valid]
+  ids.F <- metrics$id[sex.values %in% c("F", "FEMALE") & valid]
+  ids.M <- metrics$id[sex.values %in% c("M", "MALE")   & valid]
   
   if (verbose > 1){
     message(report(paste(

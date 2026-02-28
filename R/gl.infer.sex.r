@@ -117,52 +117,72 @@ gl.infer.sex <- function(gl_sexlinked,
   # Gametologs
   gl3    <- gl_sexlinked$gametolog
   table  <- gl_sexlinked$results.table  # Retrieve table
-  
   all    <- table[table$gametolog == TRUE, ]
   all    <- all[order(all$stat.p.adjusted), ]  # Order from smallest p-value
   useful <- row.names(all[1:5, ])              # Keep name of only top 5 gametologs
   
+  obj <- list(gl1, gl2, gl3)
+  n_ind  <- NULL
+  for (x in obj) {
+    if (!is.null(x)) {
+      n_ind <- length(x@ind.names)
+      break
+    }
+  }
+  
   # Make sex assignment per type of sex-linked loci (Functions declared below)
   # W/Y-linked
-  if (gl1@n.loc >= 1) {
+  if (!is.null(gl1)) {
     w <- W.sex(gl1, system = system)
+    message(report(
+      "  Assigning sexes based on W-linked/Y-linked loci.\n"
+    ))
   } else {
     message(warn(
-      "  Not enough W-linked/Y-linked loci (need at least 1). Assigning NA...\n"
+      "  No W-linked/Y-linked loci were found. Assigning NAs to
+      sex assignment based on W-linked/Y-linked loci...\n"
       ))
     w <- data.frame(
-      W.sex = rep(NA, length(gl1@ind.names)),
-      n0.w  = rep(NA, length(gl1@ind.names)),
-      n1.w  = rep(NA, length(gl1@ind.names))
+      W.sex = rep(NA, n_ind),
+      n0.w  = rep(NA, n_ind),
+      n1.w  = rep(NA, n_ind)
     )
   }
   # Z/X-linked
-  if (gl2@n.loc >= 2) {
+  if (!is.null(gl2) && gl2@n.loc >= 2) {
     z <- Z.sex(gl2, system = system, seed = seed)
+    message(report(
+      "  Assigning sexes based on Z-linked/X-linked loci.\n"
+    ))
   } else {
     message(warn(
-      "  Not enough Z-linked/X-linked loci (need at least 2). Assigning NA...\n"
+      "  Not enough Z-linked/X-linked loci (at least 2 are needed). Assigning NAs to
+      sex assignment based on Z-linked/X-linked loci...\n"
       ))
     z <- data.frame(
-      Z.sex = rep(NA, length(gl2@ind.names)),
-      n1.z  = rep(NA, length(gl2@ind.names)),
-      n0.z  = rep(NA, length(gl2@ind.names))
+      Z.sex = rep(NA, n_ind),
+      n1.z  = rep(NA, n_ind),
+      n0.z  = rep(NA, n_ind)
     )
   }
   # Gametologs
-  if (gl3@n.loc >= 5) {
+  if (!is.null(gl3) && gl3@n.loc >= 5) {
     g <- g.sex(gl3,
                system = system,
                seed = seed,
                useful = useful)
+    message(report(
+      "  Assigning sexes based on gamtologous loci.\n"
+    ))
   } else {
     message(warn(
-      "  Not enough gametologs (need at least 5). Assigning NA...\n"
+      "  Not enough gametologs (at least 5 are needed). Assigning NAs to
+      sex assignment based on gametologous loci...\n"
       ))
     g <- data.frame(
-      g.sex = rep(NA, length(gl3@ind.names)),
-      n1.g  = rep(NA, length(gl3@ind.names)),
-      n0.g  = rep(NA, length(gl3@ind.names))
+      g.sex = rep(NA, n_ind),
+      n1.g  = rep(NA, n_ind),
+      n0.g  = rep(NA, n_ind)
     )
   }
   
@@ -219,7 +239,7 @@ gl.infer.sex <- function(gl_sexlinked,
   
   colnames(A)[1] <- "id"
   
-  message("***FINISHED***\n")
+  message("***SUCCESS***\n")
   
   return(A)
 }

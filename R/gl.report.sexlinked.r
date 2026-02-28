@@ -39,7 +39,7 @@
 #' (>50,000 SNPs). However, we strongly encourage you to always inspect the
 #' output plots at least once to make sure everything is working properly.
 #'
-#'\strong{ Function output }
+#'\strong{ Function's output }
 #'
 #' This function returns two plots:\itemize{
 #' \item {A plot based on loci call rate by sex, with w/y-linked loci colored
@@ -207,15 +207,14 @@ gl.report.sexlinked <- function(x,
   valid      <- !is.na(sex.values)
   
   # Check that at least one F or M exists
-  if (!any(sex.values[valid] %in% c("F", "M"))) {
-    stop(error(
-      "Females and males in the 'sex' column must be 'F' or 'M' (any case)."
-    ))
+  if (!any(sex.values[valid] %in% c("F", "M", "MALE", "FEMALE"))) {
+    stop(error("Females and males in the 'sex' column must be 'F' and 'M', 
+               or 'MALE' and 'FEMALE' (case-insensitive)."))
   }
   
   # subset IDs
-  ids.F <- metrics$id[sex.values == "F" & valid]
-  ids.M <- metrics$id[sex.values == "M" & valid]
+  ids.F <- metrics$id[sex.values %in% c("F", "FEMALE") & valid]
+  ids.M <- metrics$id[sex.values %in% c("M", "MALE")   & valid]
   
   if (verbose > 1)
     message(report(paste(
