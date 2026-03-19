@@ -6,7 +6,7 @@
 #' @importFrom stats complete.cases
 #' @importFrom methods getPackageName
 #' @import ggplot2
-#' @import adegenet
+#' @rawNamespace import(adegenet, except = c(glMean, glSum) )
 #' @import dartR.base
 #' @import dartR.data
 
