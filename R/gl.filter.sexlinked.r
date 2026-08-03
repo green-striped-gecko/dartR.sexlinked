@@ -706,8 +706,12 @@ gl.filter.sexlinked <- function(x,
   }
   
   ##### 3.2 Subset x object
-  gl.autosomal <- x[, autosomal]
-  
+  if (length(autosomal) > 0){
+    gl.autosomal <- x[, autosomal]  # Loci are columns
+  } else {
+    gl.autosomal <- NULL
+  }
+
   #################### 4. Output
   if (ncores > 1) {
     parallel::stopCluster(cl)
