@@ -26,11 +26,11 @@ License: GPL (>= 3)
 URL: https://green-striped-gecko.github.io/dartR/
 BugReports: https://groups.google.com/g/dartr?pli=1
 Depends: 
-    adegenet (>= 2.0.0),
     dartR.base,
     dartR.data,
     R (>= 3.5)
 Imports: 
+    adegenet (>= 2.0.0),
     doParallel (>= 1.0.17),
     ggplot2,
     methods,
