@@ -31,3 +31,13 @@
   when the input is a plain genlight (previously all loci's metrics).
 * Each returned genlight object records the call in `@other$history`.
 * Empty categories are documented as `NULL`.
+
+## gl.filter.sexlinked()
+
+* Receives the same classification fixes as `gl.report.sexlinked()` and
+  `gl.keep.sexlinked()`. Datasets with no males or an unmatched `id` column
+  previously came back unfiltered; they now error or are filtered correctly.
+  The loci returned are exactly those not returned by `gl.keep.sexlinked()`.
+* The returned object carries only its own loci's `loc.metrics` when the
+  input is a plain genlight, and records the call in `@other$history`.
+* Returning NULL when every locus is sex-linked is now documented.
