@@ -37,6 +37,9 @@ Imports:
     utils,
     foreach,
     patchwork
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Encoding: UTF-8
 NeedsCompilation: no
 Packaged: 2021-04-28 23:28:46 UTC;
