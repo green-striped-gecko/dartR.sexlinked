@@ -19,3 +19,15 @@
 * `plot.theme` is now applied to both plots.
 * Parallel workers are stopped when the function exits with an error.
 * Classification loops are vectorised: about 2 times faster in serial runs.
+
+## gl.keep.sexlinked()
+
+* Receives the classification fixes made to `gl.report.sexlinked()` above:
+  sex read by row, an error when a sex has no individuals, no crash with a
+  single individual of a sex, SNP data only, Fisher's test on the observed
+  counts, `plot.theme` applied, workers stopped on error, vectorised loops.
+  Its `results.table` is identical to the output of `gl.report.sexlinked()`.
+* Returned genlight objects now carry only their own loci's `loc.metrics`
+  when the input is a plain genlight (previously all loci's metrics).
+* Each returned genlight object records the call in `@other$history`.
+* Empty categories are documented as `NULL`.
