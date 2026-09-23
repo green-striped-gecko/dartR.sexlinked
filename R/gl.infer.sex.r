@@ -148,7 +148,7 @@ gl.infer.sex <- function(gl_sexlinked,
     name2 <- "z.linked"
   }
   
-  if (!is.list(gl_sexlinked) || is(gl_sexlinked, "genlight") ||
+  if (!is.list(gl_sexlinked) ||
       is.null(gl_sexlinked[["results.table"]])) {
     stop(error(
       "Parameter 'gl_sexlinked' must be the list returned by gl.keep.sexlinked().\n"
