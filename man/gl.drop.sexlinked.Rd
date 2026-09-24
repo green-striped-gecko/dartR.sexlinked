@@ -2,26 +2,32 @@
 % Please edit documentation in R/gl.drop.sexlinked.r
 \name{gl.drop.sexlinked}
 \alias{gl.drop.sexlinked}
-\title{Used to remove loci that are sex linked}
+\title{Removes loci that are sex linked (deprecated)}
 \usage{
-gl.drop.sexlinked(x, system = NULL)
+gl.drop.sexlinked(x, system = NULL, ...)
 }
 \arguments{
 \item{x}{Name of the genlight object containing the SNP data. This genlight
 object needs to contain the sex of the individuals [required].}
 
-\item{system}{String that declares the sex-determination system of the 
+\item{system}{String that declares the sex-determination system of the
 species: 'zw' or 'xy' [required].}
+
+\item{...}{Further arguments passed to \code{gl.filter.sexlinked}
+(ncores, plot.display, plot.theme, plot.colors, plot.file, plot.dir,
+verbose).}
 }
 \value{
-A warning.
+What \code{gl.filter.sexlinked} returns: a genlight object with the
+autosomal loci, or NULL.
 }
 \description{
-This function is deprecated. Please use \code{\link{gl.filter.sexlinked}} 
-instead.
+This function is deprecated. Please use \code{\link{gl.filter.sexlinked}}
+instead. It warns and then runs \code{gl.filter.sexlinked} with the same
+arguments, so scripts written for it keep working.
 }
 \details{
-This function has been deprecated and replaced by gl.filter.sexlinked in 
+This function has been deprecated and replaced by gl.filter.sexlinked in
 order to keep consistency with other functions (gl.report -> gl.filter).
 }
 \references{
@@ -33,7 +39,10 @@ order to keep consistency with other functions (gl.report -> gl.filter).
   Ecology Resources, 00, 1-21.
  }
 }
+\seealso{
+\code{\link{gl.filter.sexlinked}}
+}
 \author{
-Custodian: Diana Robledo-Ruiz -- Post to
-  \url{https://groups.google.com/d/forum/dartr}
+Author(s): Diana Robledo-Ruiz. Custodian: Diana Robledo-Ruiz --
+  Post to \url{https://groups.google.com/d/forum/dartr}
 }
