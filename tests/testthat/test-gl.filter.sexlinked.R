@@ -1,7 +1,7 @@
 # Characterization test for gl.filter.sexlinked().
 # Captured on commit f293fba (version 1.2.2), then updated only for the
 # changes approved in function-review/reports/dartR.sexlinked/
-# gl.filter.sexlinked.md (dartR.base). A failing expectation here means
+# gl.filter.sexlinked.md. A failing expectation here means
 # behaviour changed; it does not mean the old behaviour was correct.
 
 run_filter <- function(x, system = "xy", ...) {
