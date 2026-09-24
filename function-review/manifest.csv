@@ -2,5 +2,5 @@ function,package,family,claimed_by,status,pr
 gl.report.sexlinked,dartR.sexlinked,report,luis,done,33
 gl.keep.sexlinked,dartR.sexlinked,data manipulation,luis,done,34
 gl.filter.sexlinked,dartR.sexlinked,filter,luis,done,35
-gl.infer.sex,dartR.sexlinked,analysis,luis,pr-open,36
+gl.infer.sex,dartR.sexlinked,analysis,luis,done,36
 gl.drop.sexlinked,dartR.sexlinked,data manipulation,,pending,

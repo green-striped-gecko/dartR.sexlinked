@@ -1,7 +1,7 @@
 # Characterization test for gl.infer.sex().
 # Captured on commit 179080b (version 1.2.2) before review, then updated only
 # for the changes approved in function-review/reports/dartR.sexlinked/
-# gl.infer.sex.md (dartR.base). A failing expectation here means behaviour
+# gl.infer.sex.md. A failing expectation here means behaviour
 # changed; it does not mean the old behaviour was correct.
 
 keep_quiet <- function(x, system) {

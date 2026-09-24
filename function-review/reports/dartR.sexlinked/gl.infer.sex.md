@@ -148,7 +148,7 @@ Branch `review-gl.infer.sex` from `origin/dev` (179080b). Characterization test:
     {"id": "F10", "severity": "LOW", "confidence": "high", "rule": "DOC1", "status": "approved", "change": 8}
   ],
   "coverage_skipped": ["DAT6: no FBM fixture", "Google Group not searched"],
-  "status": "pr-open",
+  "status": "done",
   "pr": 36
 }
 ```
