@@ -1,5 +1,14 @@
 # dartR.sexlinked 1.2.6
 
+## gl.drop.sexlinked()
+
+* The deprecated `gl.drop.sexlinked()` now warns and then runs
+  `gl.filter.sexlinked()` with the same arguments, returning the autosomal
+  genlight. Since March 2026 it returned its warning text, so
+  `x <- gl.drop.sexlinked(x, "xy")` replaced the data with a character
+  string, and calls with `ncores`, `plot.display` or `verbose` failed with
+  "unused arguments".
+
 ## gl.report.sexlinked()
 
 * Sex is now read from the rows of `ind.metrics` in individual order instead
