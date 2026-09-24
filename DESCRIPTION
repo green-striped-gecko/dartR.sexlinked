@@ -1,8 +1,8 @@
 Type: Package
 Package: dartR.sexlinked
 Title: Analysing SNP Data to Identify Sex-Linked Markers
-Version: 1.2.2
-Date: 2026-02-17
+Version: 1.2.3
+Date: 2026-09-24
 Revision: Elastic Elapid
 Authors@R: c(
     person("Diana", "Robledo-Ruiz", , "diana.robledoruiz1@monash.edu", role = c("aut","cre")),
