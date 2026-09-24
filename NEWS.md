@@ -1,4 +1,4 @@
-# dartR.sexlinked 1.2.3
+# dartR.sexlinked 1.2.6
 
 ## gl.report.sexlinked()
 

@@ -1,7 +1,7 @@
 Type: Package
 Package: dartR.sexlinked
 Title: Analysing SNP Data to Identify Sex-Linked Markers
-Version: 1.2.3
+Version: 1.2.6
 Date: 2026-09-24
 Revision: Elastic Elapid
 Authors@R: c(
