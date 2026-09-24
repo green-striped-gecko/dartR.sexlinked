@@ -1,4 +1,4 @@
-# dartR.sexlinked 1.2.2.9000
+# dartR.sexlinked 1.2.3
 
 ## gl.report.sexlinked()
 
@@ -41,3 +41,21 @@
 * The returned object carries only its own loci's `loc.metrics` when the
   input is a plain genlight, and records the call in `@other$history`.
 * Returning NULL when every locus is sex-linked is now documented.
+
+## gl.infer.sex()
+
+* `agreed.sex` changes in two cases. An individual with no usable genotypes
+  is now `NA` (was `*F`). A tie between one `F` and one `M` assignment is now
+  `*?` (was always `*F`, whichever way round the tie was; 28 of 376
+  individuals in LBP).
+* The function now stops with an error when `gl_sexlinked` is not the output
+  of `gl.keep.sexlinked()`, was built with the other `system`, or contains no
+  sex-linked loci. Previously a mismatched `system` returned `*F` for every
+  individual with ids replaced by row numbers.
+* New `verbose` argument; messages follow the standard dartR verbosity levels.
+* The caller's random number stream is restored on exit. Previously the
+  `seed` used for k-means replaced it.
+* Individuals are matched by position, so duplicated individual names no
+  longer set every X-/Z-linked and gametolog assignment to `NA`.
+* Documentation now states that only the top 5 gametologs are used, the
+  minimum numbers of loci, and that k-means assumes both sexes are present.
