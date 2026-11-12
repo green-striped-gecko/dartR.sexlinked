@@ -1,4 +1,10 @@
-# dartR.sexlinked 1.2.6
+# dartR.sexlinked 1.2.7
+
+* History: functions called through `do.call(fun, list(x = gl, ...))` no
+  longer store the whole input object in `@other$history` (the calls are
+  compacted with `dartR.base::utils.history.call()`), and no longer stop
+  with "cannot coerce type 'closure'" at `verbose >= 1`. Needs the current
+  dartR.base.
 
 ## gl.drop.sexlinked()
 

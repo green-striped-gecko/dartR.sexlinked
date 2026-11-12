@@ -1,9 +1,9 @@
 Type: Package
 Package: dartR.sexlinked
 Title: Analysing SNP Data to Identify Sex-Linked Markers
-Version: 1.2.6
-Date: 2026-09-24
-Revision: Elastic Elapid
+Version: 1.2.7
+Date: 2026-11-12
+Revision: Generous Gecko
 Authors@R: c(
     person("Diana", "Robledo-Ruiz", , "diana.robledoruiz1@monash.edu", role = c("aut","cre")),
     person("Floriaan", "Devloo-Delva", , "floriaan.devloo-delva@csiro.au ", role = "aut"),
@@ -26,7 +26,7 @@ License: GPL (>= 3)
 URL: https://green-striped-gecko.github.io/dartR/
 BugReports: https://groups.google.com/g/dartr?pli=1
 Depends: 
-    dartR.base,
+    dartR.base (>= 1.2.7),
     dartR.data,
     R (>= 3.5)
 Imports: 

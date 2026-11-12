@@ -129,7 +129,7 @@ gl.filter.sexlinked <- function(x,
   
   # FLAG SCRIPT START
   funname <- match.call()[[1]]
-  utils.flag.start(func = funname,
+  funname <- utils.flag.start(func = funname,
                    build = "v.2023.3",
                    verbose = verbose)
   
@@ -492,7 +492,7 @@ gl.filter.sexlinked <- function(x,
     }
     # ADD TO HISTORY
     nh <- length(gl.autosomal@other$history)
-    gl.autosomal@other$history[[nh + 1]] <- match.call()
+    gl.autosomal@other$history[[nh + 1]] <- utils.history.call(match.call())
   } else {
     gl.autosomal <- NULL
   }
