@@ -2,7 +2,7 @@
 % Please edit documentation in R/gl.report.sexlinked.r
 \name{gl.report.sexlinked}
 \alias{gl.report.sexlinked}
-\title{Filters loci that are sex linked}
+\title{Reports loci that are sex linked}
 \usage{
 gl.report.sexlinked(
   x,
@@ -25,15 +25,15 @@ details [required].}
 species: 'zw' or 'xy' [required].}
 
 \item{ncores}{Number of processes to be used in parallel operation. If ncores
-> 1 parallel operation is activated, see "Details" section [default 1].}
+> 1 parallel operation is activated [default 1].}
 
-\item{plot.display}{Creates two output plots. See explanation in details
-[default TRUE].}
+\item{plot.display}{If TRUE, displays the two output plots. See explanation
+in details [default TRUE].}
 
-\item{plot.theme}{Theme for the plot. See Details for options
-[default theme_dartR()].[not yet implemented]}
+\item{plot.theme}{Theme for the plots [default theme_dartR()].}
 
-\item{plot.colors}{[not implemented yet]}
+\item{plot.colors}{Not implemented; the plots use fixed colours for each
+category of loci [default NULL].}
 
 \item{plot.file}{Name for the RDS binary file to save (base name only,
 exclude extension) [default NULL].}
@@ -43,10 +43,10 @@ by the global working directory or tempdir()].}
 
 \item{verbose}{Verbosity: 0, silent or fatal errors; 1, begin and end; 2,
 progress log; 3, progress and results summary; 5, full report
- [default NULL, unless specified using gl.set.verbosity].}
+[default 2, unless specified using gl.set.verbosity].}
 }
 \value{
-A dataframe and 2 plots.
+A dataframe with one row per locus (see Details).
 }
 \description{
 This function identifies sex-linked and autosomal loci present in a SNP
@@ -54,29 +54,52 @@ dataset (genlight object) using individuals with known sex. It identifies
 five types of loci: w-linked or y-linked, sex-biased, z-linked or
 x-linked, gametologous and autosomal.
 
-This function produces as output a dataframe and 2 plots.
+This function returns a dataframe and displays 2 plots.
 }
 \details{
 The genlight object must contain in \code{gl@other$ind.metrics} a column
-named "id", and a column named "sex" in which individuals with known-sex are
-assigned 'M' for male, or 'F' for female. The function ignores individuals
-that are assigned anything else or nothing at all (unknown-sex).
+named "sex" (case-insensitive) in which individuals with known sex are
+assigned 'F' or 'Female' for females, and 'M' or 'Male' for males
+(case-insensitive). The rows of \code{ind.metrics} must be in the same
+order as the individuals in the genlight object. The function ignores
+individuals that are assigned anything else or nothing at all
+(unknown sex). At least one female and one male are required. SilicoDArT
+(presence/absence) data are not accepted.
 
-The creation of plots can be turned-off (\code{plot.display = FALSE}) in
-order to save a little bit of running time for very large datasets
-(>50,000 SNPs). However, we strongly encourage you to always inspect the
-output plots at least once to make sure everything is working properly.
+\strong{ Classification of loci }
+
+For each locus, the function tests for independence of sex and call rate
+(phase 1), and of sex and heterozygosity (phase 2). It uses Fisher's exact
+test when fewer than 1,000 individuals of known sex are scored, and a
+chi-square test (without continuity correction) otherwise. P-values are
+adjusted for false discovery rate. Loci are then classified as follows:
+\itemize{
+\item {w-linked (zw) or y-linked (xy): adjusted p-value of phase 1 <= 0.01
+and call rate <= 0.1 in males (zw) or females (xy).}
+\item {sex-biased: adjusted p-value of phase 1 <= 0.01, and not w/y-linked.}
+\item {z-linked (zw) or x-linked (xy): not w/y-linked or sex-biased,
+adjusted p-value of phase 2 <= 0.01, and heterozygosity higher in males
+(zw) or females (xy).}
+\item {gametolog: as z/x-linked, but heterozygosity not higher in males
+(zw) or females (xy).}
+\item {autosomal: all other loci.}
+}
+
+The display of plots can be turned off (\code{plot.display = FALSE}), but
+we strongly encourage you to always inspect the output plots at least once
+to make sure everything is working properly.
 
 \strong{ Function's output }
 
-This function returns two plots:\itemize{
+This function displays two plots:\itemize{
 \item {A plot based on loci call rate by sex, with w/y-linked loci colored
        in yellow and sex-biased loci in blue}
 \item {A plot based on loci heterozygosity by sex, with z/x-linked loci
  colored in orange and gametologs in green}
 }
+The plots are not returned; use \code{plot.file} to save them.
 
-And a dataframe in which loci are in rows, and columns:\itemize{
+And it returns a dataframe in which loci are in rows, and columns:\itemize{
 \item {index - Index number to identify loci}
 \item {count.F.miss - Count of females that have this locus as missing
 data (NA).}
@@ -86,9 +109,10 @@ data (NA)}
 (0, 1 or 2; i.e. non-missing)}
 \item {count.M.scored - Count of males that have this locus scored
 (0, 1 or 2; i.e. non-missing)}
-\item {ratio - Fisher's exact test estimate testing for the independence of
-call rate and sex for this locus}
-\item {p.value - P-value for the Fisher's exact test estimate}
+\item {ratio - Test statistic for the independence of call rate and sex
+for this locus: the Fisher's exact test odds ratio estimate, or the
+chi-square statistic when 1,000 or more individuals are tested}
+\item {p.value - P-value of the test}
 \item {p.adjusted - P-value adjusted for false discovery rate}
 \item {scoringRate.F - Female call rate (proportion of females that were
 scored for this locus; x-axis in the 1st plot)}
@@ -100,9 +124,11 @@ for this locus; y-axis in the 1st plot)}
 \item {count.M.het - Count of males that are heterozygous for this locus}
 \item {count.F.hom - Count of females that are homozygous for this locus}
 \item {count.M.hom - Count of males that are homozygous for this locus}
-\item {stat - Fisher's exact test estimate testing for the independence of
-heterozygosity and sex for this locus}
-\item {stat.p.value - P-value for the Fisher's exact test estimate}
+\item {stat - Test statistic for the independence of heterozygosity and
+sex for this locus: the Fisher's exact test odds ratio estimate, or the
+chi-square statistic when 1,000 or more individuals are tested. NA for
+w/y-linked and sex-biased loci, which are not tested}
+\item {stat.p.value - P-value of the test}
 \item {stat.p.adjusted - P-value adjusted for false discovery rate}
 \item {heterozygosity.F - Proportion of females that are heterozygotes for
 this locus (x-axis in the 2nd plot)}
@@ -127,6 +153,7 @@ ncores = 1)
  }
 }
 \author{
-Custodian: Diana Robledo-Ruiz -- Post to
-  \url{https://groups.google.com/d/forum/dartr}
+Author(s): Diana Robledo-Ruiz. Custodian: Diana Robledo-Ruiz --
+  Post to \url{https://groups.google.com/d/forum/dartr}
 }
+\concept{matched report}

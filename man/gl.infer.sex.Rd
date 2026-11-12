@@ -4,20 +4,26 @@
 \alias{gl.infer.sex}
 \title{Uses sex-linked loci to infer sex of individuals}
 \usage{
-gl.infer.sex(gl_sexlinked, system = NULL, seed = NULL)
+gl.infer.sex(gl_sexlinked, system = NULL, seed = NULL, verbose = NULL)
 }
 \arguments{
 \item{gl_sexlinked}{The output of function gl.keep.sexlinked (complete
 list with 5 elements). See explanation in "Details" section [required].}
 
 \item{system}{String that declares the sex-determination system of the
-species: 'zw' or 'xy' [required].}
+species: 'zw' or 'xy'. It must be the same system used in
+gl.keep.sexlinked [required].}
 
 \item{seed}{User-defined integer for repeatability purposes. If not provided
-by user, it is chosen randomly by default. See "Details" section.}
+by user, it is chosen randomly. See "Details" section [default NULL].}
+
+\item{verbose}{Verbosity: 0, silent or fatal errors; 1, begin and end; 2,
+progress log; 3, progress and results summary; 5, full report
+[default 2, unless specified using gl.set.verbosity].}
 }
 \value{
-A dataframe.
+A dataframe with one row per individual and the 11 columns
+described in "Details".
 }
 \description{
 This function uses the output of function gl.keep.sexlinked (list of 5
@@ -31,16 +37,36 @@ columns.
 }
 \details{
 Parameter \code{gl_sexlinked} must be the name of the output object (a
-list of 5 elements) produced by function \code{gl.keep.sexlinked}. Parameter
-\code{seed} must be an integer that will be used on the KMeans algorithm used
-by the function. We highly recommend choosing the seed to guarantee
-repeatability.
+list of 5 elements) produced by function \code{gl.keep.sexlinked}, run with
+the same \code{system}. Parameter \code{seed} must be an integer that will
+be used on the KMeans algorithm used by the function. If \code{seed} is not
+provided, the value chosen is not reported, so we highly recommend choosing
+the seed to guarantee repeatability. The random number stream of the R
+session is restored when the function ends.
+
+Each type of sex-linked loci is used as follows:
+\itemize{
+\item {W-linked or Y-linked loci: each individual is assigned to the
+heterogametic sex if it has more called than missing genotypes, and to the
+homogametic sex otherwise.}
+\item {Z-linked or X-linked loci: used only if there are at least 2 loci.
+Individuals are split into two groups by KMeans on their proportions of
+heterozygous and homozygous genotypes.}
+\item {Gametologs: used only if there are at least 5 loci. Only the 5
+gametologs with the smallest adjusted p-value in the results table are
+used, and they are split into two groups by KMeans as for Z-/X-linked
+loci.}
+}
+KMeans always returns two groups, so the Z-/X-linked and gametolog
+assignments assume that both sexes are present in the dataset. If only one
+sex is present, part of the individuals will still be assigned to the
+other sex.
 
 Note that this function was created with the explicit intent that a human
 checks the evidence for the sex assignments that do NOT agree for all
 types of sex-linked loci (called "indefinite sex assignments" and denoted
-as "M" or "F" in the last column of dataframe output). This human can then
-use their criterion to validate these assignments.
+as "*M", "*F" or "*?" in the last column of dataframe output). This human
+can then use their criterion to validate these assignments.
 
 \strong{ Function's output }
 
@@ -56,23 +82,26 @@ had a called genotype (cf. missing genotype).}
 individual had a missing genotype (cf. called genotype).}
 \item {z.linked.sex or x.linked.sex > Sex inferred using z-linked or x-linked
 loci.}
-\item {#Hom.z or #Hom.x > Number of z-linked or x-linked loci for which the
-individual is homozygous.}
 \item {#Het.z or #Het.x > Number of z-linked or x-linked loci for which the
 individual is heterozygous.}
+\item {#Hom.z or #Hom.x > Number of z-linked or x-linked loci for which the
+individual is homozygous.}
 \item {gametolog.sex > Sex inferred using gametologs.}
-\item {#Hom.g > Number of gametologous loci for which the individual is
-homozygous.}
-\item {#Het.g > Number of gametologous loci for which the individual is
+\item {#Het.g > Number of the 5 gametologs used for which the individual is
 heterozygous.}
-\item {agreed.sex > Agreed sex: 'F' or 'M' if all preliminary sex-assignments
-match (i.e., definite sex assignment), and '*F' or '*M' if NOT all
-preliminary sex-assignments match (i.e., indefinite sex assignment).}
+\item {#Hom.g > Number of the 5 gametologs used for which the individual is
+homozygous.}
+\item {agreed.sex > Agreed sex: 'F' or 'M' if all available preliminary
+sex-assignments match (i.e., definite sex assignment); '*F' or '*M' if NOT
+all preliminary sex-assignments match (i.e., indefinite sex assignment),
+following the majority; '*?' if there is no majority; and NA if no
+preliminary sex-assignment is available.}
 }
+Columns for a type of sex-linked loci that could not be used are NA.
 }
 \examples{
 LBP_sexLinked <- gl.keep.sexlinked(x = LBP, system = "xy", 
-plot.display = TRUE, ncores = 1)
+plot.display = FALSE, ncores = 1)
 inferred.sexes <- gl.infer.sex(gl_sexlinked = LBP_sexLinked, system = "xy", 
 seed = 100)
 inferred.sexes
@@ -87,7 +116,11 @@ inferred.sexes
   Ecology Resources, 00, 1-21.
  }
 }
-\author{
-Custodian: Diana Robledo-Ruiz  -- Post to
-  \url{https://groups.google.com/d/forum/dartr}
+\seealso{
+\code{\link{gl.keep.sexlinked}}
 }
+\author{
+Author(s): Diana Robledo-Ruiz. Custodian: Diana Robledo-Ruiz --
+  Post to \url{https://groups.google.com/d/forum/dartr}
+}
+\concept{unmatched report}
