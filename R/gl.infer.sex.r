@@ -341,11 +341,17 @@ gl.infer.sex <- function(gl_sexlinked,
 ### Map NAs (missing) and scored (called) to 1Dim in [-1,1], IF x<0, F else M
 
 W.sex <- function(gl, system = NULL) {
-  w <- as.matrix(gl)
-  w[is.na(w)] <- 3
-  
-  n0.w <- unname(rowSums(w == 0 | w == 2 | w == 1, na.rm = TRUE))
-  n1.w <- unname(rowSums(w == 3, na.rm = TRUE))
+  # Per-individual counts added over blocks of loci
+  # (dartR.base::utils.fbm.rowwise): a file-backed object is not decoded as
+  # a whole, and the counts are identical for both storage types
+  cnt <- dartR.base::utils.fbm.rowwise(gl, function(w) {
+    w[is.na(w)] <- 3
+    cbind(rowSums(w == 0 | w == 2 | w == 1, na.rm = TRUE),
+          rowSums(w == 3, na.rm = TRUE))
+  })
+
+  n0.w <- unname(cnt[, 1])
+  n1.w <- unname(cnt[, 2])
   
   # Calculate proportion
   sex.score <- function(f, m) {
@@ -372,10 +378,16 @@ W.sex <- function(gl, system = NULL) {
 ### Map Hom and Het to 2Dim and apply kmeans. Choose the label from maximum Hom
 
 Z.sex <- function(gl, system = NULL, seed = 42) {
-  z <- as.matrix(gl)
-  
-  n0.z <- unname(rowSums(z == 0 | z == 2, na.rm = TRUE))
-  n1.z <- unname(rowSums(z == 1, na.rm = TRUE))
+  # Per-individual counts added over blocks of loci
+  # (dartR.base::utils.fbm.rowwise): a file-backed object is not decoded as
+  # a whole, and the counts are identical for both storage types
+  cnt <- dartR.base::utils.fbm.rowwise(gl, function(z) {
+    cbind(rowSums(z == 0 | z == 2, na.rm = TRUE),
+          rowSums(z == 1, na.rm = TRUE))
+  })
+
+  n0.z <- unname(cnt[, 1])
+  n1.z <- unname(cnt[, 2])
   
   Z  <- cbind(n0.z, n1.z) / (n0.z + n1.z)
   ok <- !is.na(Z[, 1])  # Individuals with no called genotype are left out
@@ -412,9 +424,13 @@ g.sex <-  function(gl,
                    system = NULL,
                    seed = 42,
                    useful = useful) {
-  z <- as.matrix(gl)
-  z <- z[, useful]
-  
+  # Only the loci in 'useful' are read (dartR.base::utils.fbm.reader), so a
+  # file-backed object is not decoded as a whole; selected by name as
+  # as.matrix(gl)[, useful], with the same error for an unknown name
+  cols <- match(useful, locNames(gl))
+  if (anyNA(cols)) stop("subscript out of bounds")
+  z <- dartR.base::utils.fbm.reader(gl)(cols = cols)
+
   n0.g <- unname(rowSums(z == 0 | z == 2, na.rm = TRUE))
   n1.g <- unname(rowSums(z == 1, na.rm = TRUE))
   
