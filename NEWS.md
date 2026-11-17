@@ -1,4 +1,4 @@
-# dartR.sexlinked (dev_fbm)
+# dartR.sexlinked 1.3.0
 
 * `gl.report.sexlinked()`, `gl.filter.sexlinked()`, `gl.keep.sexlinked()`
   and `gl.infer.sex()` read file-backed objects in blocks of loci
