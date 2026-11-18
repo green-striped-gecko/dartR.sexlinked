@@ -1,3 +1,7 @@
+# Slow file: skipped on CRAN to keep the check time under 10 minutes; runs
+# with devtools::test() and on GitHub Actions.
+skip_on_cran()
+
 # File-backed objects: the per-locus counts by sex (gl.report.sexlinked,
 # gl.filter.sexlinked, gl.keep.sexlinked) and the per-individual counts of
 # gl.infer.sex are read in blocks of loci (dartR.base::utils.fbm.colwise,

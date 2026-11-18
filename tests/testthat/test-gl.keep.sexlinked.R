@@ -1,3 +1,7 @@
+# Slow file: skipped on CRAN to keep the check time under 10 minutes; runs
+# with devtools::test() and on GitHub Actions.
+skip_on_cran()
+
 # Characterization test for gl.keep.sexlinked().
 # Captured on commit f293fba (version 1.2.2), then updated only for the
 # changes approved in function-review/reports/dartR.sexlinked/
