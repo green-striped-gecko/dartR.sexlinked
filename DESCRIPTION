@@ -2,8 +2,8 @@ Type: Package
 Package: dartR.sexlinked
 Title: Analysing SNP Data to Identify Sex-Linked Markers
 Version: 1.3.0
-Date: 2026-11-12
-Revision: Generous Gecko
+Date: 2026-11-18
+Revision: Hardy Hedgehog
 Authors@R: c(
     person("Diana", "Robledo-Ruiz", , "diana.robledoruiz1@monash.edu", role = c("aut","cre")),
     person("Floriaan", "Devloo-Delva", , "floriaan.devloo-delva@csiro.au ", role = "aut"),
