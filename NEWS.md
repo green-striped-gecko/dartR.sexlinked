@@ -1,3 +1,13 @@
+# dartR.sexlinked 1.3.0
+
+* `gl.report.sexlinked()`, `gl.filter.sexlinked()`, `gl.keep.sexlinked()`
+  and `gl.infer.sex()` read file-backed objects in blocks of loci
+  (`dartR.base::utils.fbm.colwise()`, `utils.fbm.rowwise()`,
+  `utils.fbm.reader()`) instead of decoding (and transposing) the whole
+  genotype matrix. The counts by sex and per individual, and so all
+  results, are identical to those of the same data held in memory. Needs
+  dartR.base >= 1.2.7.9000.
+
 # dartR.sexlinked 1.2.7
 
 * History: functions called through `do.call(fun, list(x = gl, ...))` no

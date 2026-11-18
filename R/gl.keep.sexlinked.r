@@ -224,11 +224,22 @@ gl.keep.sexlinked <- function(x,
     doParallel::registerDoParallel(cl)
   }
   
-  # Transform genotypes to matrix (loci in rows) and subset by sex;
-  # drop = FALSE keeps a matrix when a sex has a single individual
-  gen <- t(as.matrix(x))
-  gen.F <- gen[, is.F, drop = FALSE]
-  gen.M <- gen[, is.M, drop = FALSE]
+  # Per-locus genotype counts by sex, in one pass over blocks of loci
+  # (dartR.base::utils.fbm.colwise): a file-backed object is not decoded
+  # as a whole. The counts are those of the decoded matrix split by sex
+  # (missing, scored, heterozygous and homozygous calls), so they are
+  # identical for both storage types; drop = FALSE keeps a matrix when a
+  # sex has a single individual
+  cnt <- dartR.base::utils.fbm.colwise(x, function(m) {
+    gen.F <- m[is.F, , drop = FALSE]
+    gen.M <- m[is.M, , drop = FALSE]
+    rbind(F.miss = colSums(is.na(gen.F)), M.miss = colSums(is.na(gen.M)),
+          F.scored = colSums(!is.na(gen.F)), M.scored = colSums(!is.na(gen.M)),
+          F.het = colSums(gen.F == 1, na.rm = TRUE),
+          M.het = colSums(gen.M == 1, na.rm = TRUE),
+          F.hom = colSums(gen.F != 1, na.rm = TRUE),
+          M.hom = colSums(gen.M != 1, na.rm = TRUE))
+  })
   
   # Names of the columns that depend on the sex-determination system
   if (system == "zw") {
@@ -281,15 +292,15 @@ gl.keep.sexlinked <- function(x,
   ##################### 1. Sex-linked loci by scoring rate
   
   # Create a results table with loci as row names and index number per locus
-  table <- data.frame(index = c(1:nrow(gen)), row.names = row.names(gen))
+  table <- data.frame(index = c(1:ncol(cnt)), row.names = colnames(cnt))
   
   # Count missing (NA) and add as column to table
-  table$count.F.miss <- rowSums(is.na(gen.F))
-  table$count.M.miss <- rowSums(is.na(gen.M))
+  table$count.F.miss <- cnt["F.miss", ]
+  table$count.M.miss <- cnt["M.miss", ]
   
   # Count scored ("0", "1" or "2") and add as column to table
-  table$count.F.scored <- rowSums(!is.na(gen.F))
-  table$count.M.scored <- rowSums(!is.na(gen.M))
+  table$count.F.scored <- cnt["F.scored", ]
+  table$count.M.scored <- cnt["M.scored", ]
   
   if (verbose > 1) {
     if (ncores > 1) {
@@ -365,20 +376,12 @@ gl.keep.sexlinked <- function(x,
   
   #################### 2. Sex-linked loci by heterozygosity
   # Count heterozygotes ("1") and add as column to results table
-  table$count.F.het <- rowSums(gen.F == 1, na.rm = TRUE)
-  table$count.M.het <- rowSums(gen.M == 1, na.rm = TRUE)
+  table$count.F.het <- cnt["F.het", ]
+  table$count.M.het <- cnt["M.het", ]
   
   # Count homozygotes ("0" or "2") and add as column to results table
-  table$count.F.hom <- rowSums(
-    gen.F != 1,
-    # Ignores NAs
-    na.rm = TRUE
-  )
-  table$count.M.hom <- rowSums(
-    gen.M != 1,
-    # Ignores NAs
-    na.rm = TRUE
-  )
+  table$count.F.hom <- cnt["F.hom", ]
+  table$count.M.hom <- cnt["M.hom", ]
   
   if (verbose > 1){
     message(report(
