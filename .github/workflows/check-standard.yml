@@ -57,7 +57,6 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
-            ${{ runner.os == 'Linux' && env.IGNORE_ON_LINUX || '' }}
           needs: check
 
       # dev and beta: dartR dependencies from the same Github branch
